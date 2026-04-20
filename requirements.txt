@@ -1,0 +1,2 @@
+---
+# Python dependencies of this collection
