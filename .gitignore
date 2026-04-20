@@ -1,4 +1,5 @@
 /tests/output/
+!/tests/output/bot/
 /changelogs/.plugin-cache.yaml
 __pycache__
 
