@@ -1,0 +1,24 @@
+---
+name: changelog and linters
+
+on: [workflow_call]  # allow this workflow to be called from other workflows
+
+jobs:
+  linters:
+    uses: ansible-network/github_actions/.github/workflows/tox.yml@main
+    with:
+      envname: ""
+      labelname: "lint"
+      checkout_ref: ${{ github.event.pull_request.head.sha }}
+      checkout_fetch_depth: "0"
+
+  ansible-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint@v24.2.3
