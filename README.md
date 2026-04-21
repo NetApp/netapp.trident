@@ -34,13 +34,13 @@ collections:
   - name: netapp.trident
 ```
 
-To upgrade the collection to the latest available version, run:
+Note that if you install the collection from Ansible Galaxy, it will not be upgraded automatically when you upgrade the `ansible` package. To upgrade the collection to the latest available version, run the following command:
 
 ```bash
 ansible-galaxy collection install netapp.trident --upgrade
 ```
 
-To install a specific version, for example `1.0.0`:
+You can also install a specific version of the collection, for example, if you need to downgrade when something is broken in the latest version (please report an issue in this repository). Use the following syntax to install a specific version, for example `1.0.0`:
 
 ```bash
 ansible-galaxy collection install netapp.trident:==1.0.0
