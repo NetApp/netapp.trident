@@ -13,7 +13,7 @@ PersistentVolumeClaims (PVCs), and VolumeSnapshots via the NetApp Trident CSI dr
 
 ## Tested with Ansible
 
-This collection has been tested with ansible-core >= 2.15.0.
+This collection has been tested with ansible-core >= 2.16.0.
 
 ## Using this collection
 
