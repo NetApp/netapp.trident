@@ -2,8 +2,7 @@
 
 # Ansible Validated Content Collection for NetApp Trident
 
-This collection includes a variety of validated Ansible roles to automate and
-manage Day-2 use cases involving NetApp Trident in an OpenShift Virtualization environment.
+This collection includes a variety of validated Ansible Roles to automate and manage Day-2 use cases involving NetApp Trident in an OpenShift Virtualization environment.
 
 ## Dependencies
 
