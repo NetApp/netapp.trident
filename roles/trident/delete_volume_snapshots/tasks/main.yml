@@ -1,0 +1,20 @@
+---
+# Delete VolumeSnapshots of the specified PVCs from the given namespace.
+
+# Delete VolumeSnapshots of the specified PVCs from the given namespace
+- name: Delete VolumeSnapshots of the specified PVCs from {{ pvc_namespace | default('') }} namespace
+  kubernetes.core.k8s:
+    state: absent
+    host: "{{ oc_api_url }}"
+    api_key: "{{ oc_api_token }}"
+    validate_certs: false
+    kind: VolumeSnapshot
+    namespace: "{{ pvc_namespace | default('') }}"
+    name: "{{ item.snapshot_name }}"
+  loop: "{{ volume_snapshot_specs | default([]) }}"
+  when:
+    - pvc_namespace is defined and pvc_namespace != ""
+    - item.snapshot_name is defined and item.snapshot_name != ""
+  tags:
+    - k8s_delete_volume_snapshots
+# Note: VolumeSnapshots are namespaced resources, so we delete them from the specified namespace.

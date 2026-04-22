@@ -5,7 +5,10 @@
 # Used in roles/trident/create_pvcs/tasks/main.yml
 # Used in roles/trident/create_volume_snapshotclass/tasks/main.yml
 # Used in roles/trident/create_volume_snapshots/tasks/main.yml
-# Used in roles/trident/delete_k8s_objects/tasks/main.yml
+# Used in roles/trident/delete_volume_snapshots/tasks/main.yml
+# Used in roles/trident/delete_volume_snapshotclass/tasks/main.yml
+# Used in roles/trident/delete_pvcs/tasks/main.yml
+# Used in roles/trident/delete_storageclass/tasks/main.yml
 
 configure_nfs: true               # Set to true to create NFS storage class and PVCs
 

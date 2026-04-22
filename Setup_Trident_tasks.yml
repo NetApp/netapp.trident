@@ -27,7 +27,10 @@
     - vars/trident_main.yml
   connection: local
   roles:
-  - { role: trident/delete_k8s_objects, tags: [ 'delete_k8s_objects' ] }
+  - { role: trident/delete_volume_snapshots, tags: [ 'delete_volume_snapshots' ] }
+  - { role: trident/delete_volume_snapshotclass, tags: [ 'delete_volume_snapshotclass' ] }
+  - { role: trident/delete_pvcs, tags: [ 'delete_pvcs' ] }
+  - { role: trident/delete_storageclass, tags: [ 'delete_storageclass' ] }
   tags:
   - trident_cleanup_tasks
 

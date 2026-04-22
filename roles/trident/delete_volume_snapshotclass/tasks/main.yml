@@ -1,0 +1,18 @@
+---
+# Delete VolumeSnapshotClass (cluster-scoped resource).
+
+# Delete VolumeSnapshotClass (cluster-scoped resource)
+- name: Delete VolumeSnapshotClass {{ vol_snapshot_class_specs.name | default('') }}
+  kubernetes.core.k8s:
+    state: absent
+    host: "{{ oc_api_url }}"
+    api_key: "{{ oc_api_token }}"
+    validate_certs: false
+    kind: VolumeSnapshotClass
+    name: "{{ vol_snapshot_class_specs.name | default('') }}"
+  when:
+    - vol_snapshot_class_specs is defined
+    - vol_snapshot_class_specs.name is defined and vol_snapshot_class_specs.name != ""
+  tags:
+    - k8s_delete_volume_snapshot_class
+# Note: VolumeSnapshotClass is a cluster-scoped resource, so we do not specify a namespace.
