@@ -4,32 +4,32 @@
   gather_facts: false
   connection: local
   vars:
-    oc_api_url: "https://api.example.openshift.com:6443"
-    oc_api_token: "<your_api_token>"
-    configure_nfs: true
-    configure_nfs_flexgroup: true
-    configure_iscsi: true
-    configure_fcp: true
-    configure_nvme_tcp: true
-    nfs_specs:
+    create_storageclass_oc_api_url: "https://api.example.openshift.com:6443"
+    create_storageclass_oc_api_token: "<your_api_token>"
+    create_storageclass_configure_nfs: true
+    create_storageclass_configure_nfs_flexgroup: true
+    create_storageclass_configure_iscsi: true
+    create_storageclass_configure_fcp: true
+    create_storageclass_configure_nvme_tcp: true
+    create_storageclass_nfs_specs:
       sc_name: ontap-nfs-sc
       sc_reclaim_policy: Delete
       sc_volume_binding_mode: Immediate
       nfs_version: "4.1"
-    nfs_flexgroup_specs:
+    create_storageclass_nfs_flexgroup_specs:
       sc_name: ontap-nfs-flexgroup-sc
       sc_reclaim_policy: Delete
       sc_volume_binding_mode: Immediate
       nfs_version: "4.1"
-    iscsi_specs:
+    create_storageclass_iscsi_specs:
       sc_name: ontap-iscsi-sc
       sc_reclaim_policy: Delete
       sc_volume_binding_mode: Immediate
-    nvme_tcp_specs:
+    create_storageclass_nvme_tcp_specs:
       sc_name: ontap-nvme-tcp-sc
       sc_reclaim_policy: Delete
       sc_volume_binding_mode: Immediate
-    fcp_specs:
+    create_storageclass_fcp_specs:
       sc_name: ontap-fcp-sc
       sc_reclaim_policy: Delete
       sc_volume_binding_mode: Immediate

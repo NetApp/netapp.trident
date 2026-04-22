@@ -4,11 +4,11 @@
   gather_facts: false
   connection: local
   vars:
-    oc_api_url: "https://api.example.openshift.com:6443"
-    oc_api_token: "<your_api_token>"
-    pvc_namespace: test-project
-    configure_nfs: true
-    nfs_specs:
+    create_pvcs_oc_api_url: "https://api.example.openshift.com:6443"
+    create_pvcs_oc_api_token: "<your_api_token>"
+    create_pvcs_pvc_namespace: test-project
+    create_pvcs_configure_nfs: true
+    create_pvcs_nfs_specs:
       sc_name: ontap-nfs-sc
       pvc_info:
         - { pvc_name: test-nfs-pvc-1, pvc_size: 100Gi, access_modes: [ReadWriteOnce] }

@@ -24,19 +24,19 @@ The `create_pvcs` role creates a Kubernetes namespace and provisions `Persistent
 
 | Variable                  | Description                                                              | Default        |
 |---------------------------|--------------------------------------------------------------------------|----------------|
-| `oc_api_url`              | OpenShift/Kubernetes API URL.                                            |                |
-| `oc_api_token`            | OpenShift/Kubernetes API token.                                          |                |
-| `pvc_namespace`           | Namespace where the PVCs will be created.                                | `test-project` |
-| `configure_nfs`           | Set to `true` to create NFS PVCs.                                        | `false`        |
-| `configure_nfs_flexgroup` | Set to `true` to create NFS FlexGroup PVCs.                              | `false`        |
-| `configure_iscsi`         | Set to `true` to create iSCSI PVCs.                                      | `false`        |
-| `configure_fcp`           | Set to `true` to create FCP PVCs.                                        | `false`        |
-| `configure_nvme_tcp`      | Set to `true` to create NVMe/TCP PVCs.                                   | `false`        |
-| `nfs_specs`               | `sc_name` + `pvc_info` list for NFS PVCs.                                | See defaults   |
-| `nfs_flexgroup_specs`     | `sc_name` + `pvc_info` list for NFS FlexGroup PVCs (minimum size 800Gi). | See defaults   |
-| `iscsi_specs`             | `sc_name` + `pvc_info` list for iSCSI PVCs.                              | See defaults   |
-| `nvme_tcp_specs`          | `sc_name` + `pvc_info` list for NVMe/TCP PVCs.                           | See defaults   |
-| `fcp_specs`               | `sc_name` + `pvc_info` list for FCP PVCs.                                | See defaults   |
+| `create_pvcs_oc_api_url`              | OpenShift/Kubernetes API URL.                                            |                |
+| `create_pvcs_oc_api_token`            | OpenShift/Kubernetes API token.                                          |                |
+| `create_pvcs_pvc_namespace`           | Namespace where the PVCs will be created.                                | `test-project` |
+| `create_pvcs_configure_nfs`           | Set to `true` to create NFS PVCs.                                        | `false`        |
+| `create_pvcs_configure_nfs_flexgroup` | Set to `true` to create NFS FlexGroup PVCs.                              | `false`        |
+| `create_pvcs_configure_iscsi`         | Set to `true` to create iSCSI PVCs.                                      | `false`        |
+| `create_pvcs_configure_fcp`           | Set to `true` to create FCP PVCs.                                        | `false`        |
+| `create_pvcs_configure_nvme_tcp`      | Set to `true` to create NVMe/TCP PVCs.                                   | `false`        |
+| `create_pvcs_nfs_specs`               | `sc_name` + `pvc_info` list for NFS PVCs.                                | See defaults   |
+| `create_pvcs_nfs_flexgroup_specs`     | `sc_name` + `pvc_info` list for NFS FlexGroup PVCs (minimum size 800Gi). | See defaults   |
+| `create_pvcs_iscsi_specs`             | `sc_name` + `pvc_info` list for iSCSI PVCs.                              | See defaults   |
+| `create_pvcs_nvme_tcp_specs`          | `sc_name` + `pvc_info` list for NVMe/TCP PVCs.                           | See defaults   |
+| `create_pvcs_fcp_specs`               | `sc_name` + `pvc_info` list for FCP PVCs.                                | See defaults   |
 
 Each entry in `pvc_info` accepts `pvc_name`, `pvc_size`, `access_modes`, and (for SAN backends) `volume_mode`.
 
@@ -49,11 +49,11 @@ Each entry in `pvc_info` accepts `pvc_name`, `pvc_size`, `access_modes`, and (fo
   gather_facts: false
   connection: local
   vars:
-    oc_api_url: "https://api.aa02-ocp.example.com:6443"
-    oc_api_token: "{{ OC_API_TOKEN }}"
-    pvc_namespace: test-project
-    configure_nfs: true
-    nfs_specs:
+    create_pvcs_oc_api_url: "https://api.aa02-ocp.example.com:6443"
+    create_pvcs_oc_api_token: "{{ OC_API_TOKEN }}"
+    create_pvcs_pvc_namespace: test-project
+    create_pvcs_configure_nfs: true
+    create_pvcs_nfs_specs:
       sc_name: ontap-nfs-sc
       pvc_info:
         - { pvc_name: test-nfs-pvc-1, pvc_size: 100Gi, access_modes: [ReadWriteOnce] }

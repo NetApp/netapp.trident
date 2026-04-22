@@ -18,9 +18,9 @@ The `delete_volume_snapshotclass` role deletes a cluster-scoped `VolumeSnapshotC
 
 | Variable                           | Description                                                 | Default                                  |
 |------------------------------------|-------------------------------------------------------------|------------------------------------------|
-| `oc_api_url`                       | OpenShift/Kubernetes API URL.                               | `https://api.example.openshift.com:6443` |
-| `oc_api_token`                     | OpenShift/Kubernetes API token.                             | `<your_api_token>`                       |
-| `vol_snapshot_class_specs.name`    | Name of the `VolumeSnapshotClass` to delete.                | `test-ontap-snapshot-class`              |
+| `delete_volume_snapshotclass_oc_api_url`                       | OpenShift/Kubernetes API URL.                               | `https://api.example.openshift.com:6443` |
+| `delete_volume_snapshotclass_oc_api_token`                     | OpenShift/Kubernetes API token.                             | `<your_api_token>`                       |
+| `delete_volume_snapshotclass_vol_snapshot_class_specs.name`    | Name of the `VolumeSnapshotClass` to delete.                | `test-ontap-snapshot-class`              |
 
 ## Example Playbook
 
@@ -31,9 +31,9 @@ The `delete_volume_snapshotclass` role deletes a cluster-scoped `VolumeSnapshotC
   gather_facts: false
   connection: local
   vars:
-    oc_api_url: "https://api.aa02-ocp.example.com:6443"
-    oc_api_token: "{{ OC_API_TOKEN }}"
-    vol_snapshot_class_specs:
+    delete_volume_snapshotclass_oc_api_url: "https://api.aa02-ocp.example.com:6443"
+    delete_volume_snapshotclass_oc_api_token: "{{ OC_API_TOKEN }}"
+    delete_volume_snapshotclass_vol_snapshot_class_specs:
       name: test-ontap-snapshot-class
   roles:
     - delete_volume_snapshotclass

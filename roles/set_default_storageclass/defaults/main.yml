@@ -1,7 +1,7 @@
 ---
 # defaults file for set_default_storageclass
 
-configure_nfs_flexgroup: false
-configure_iscsi: false
-configure_fcp: false
-configure_nvme_tcp: false
+set_default_storageclass_configure_nfs_flexgroup: false
+set_default_storageclass_configure_iscsi: false
+set_default_storageclass_configure_fcp: false
+set_default_storageclass_configure_nvme_tcp: false

@@ -4,9 +4,9 @@
   gather_facts: false
   connection: local
   vars:
-    oc_api_url: "https://api.example.openshift.com:6443"
-    oc_api_token: "<your_api_token>"
-    configure_nfs: true
-    default_sc: ontap-nfs-sc
+    set_default_storageclass_oc_api_url: "https://api.example.openshift.com:6443"
+    set_default_storageclass_oc_api_token: "<your_api_token>"
+    set_default_storageclass_configure_nfs: true
+    set_default_storageclass_default_sc: ontap-nfs-sc
   roles:
     - set_default_storageclass

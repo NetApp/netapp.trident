@@ -4,11 +4,11 @@
   gather_facts: false
   connection: local
   vars:
-    oc_api_url: "https://api.example.openshift.com:6443"
-    oc_api_token: "<your_api_token>"
-    pvc_namespace: test-project
-    configure_nfs: true
-    nfs_specs:
+    delete_pvcs_oc_api_url: "https://api.example.openshift.com:6443"
+    delete_pvcs_oc_api_token: "<your_api_token>"
+    delete_pvcs_pvc_namespace: test-project
+    delete_pvcs_configure_nfs: true
+    delete_pvcs_nfs_specs:
       pvc_info:
         - { pvc_name: test-nfs-pvc-1 }
   roles:

@@ -6,7 +6,7 @@ The `delete_volume_snapshots` role deletes `VolumeSnapshot` resources by name fr
 
 ## Features
 
-- Deletes each `VolumeSnapshot` listed in `volume_snapshot_specs` from `pvc_namespace`.
+- Deletes each `VolumeSnapshot` listed in `delete_volume_snapshots_volume_snapshot_specs` from `delete_volume_snapshots_pvc_namespace`.
 
 ## Requirements
 
@@ -18,10 +18,10 @@ The `delete_volume_snapshots` role deletes `VolumeSnapshot` resources by name fr
 
 | Variable                  | Description                                                       | Default                                  |
 |---------------------------|-------------------------------------------------------------------|------------------------------------------|
-| `oc_api_url`              | OpenShift/Kubernetes API URL.                                     | `https://api.example.openshift.com:6443` |
-| `oc_api_token`            | OpenShift/Kubernetes API token.                                   | `<your_api_token>`                       |
-| `pvc_namespace`           | Namespace containing the `VolumeSnapshot` resources to delete.    | `test-project`                           |
-| `volume_snapshot_specs`   | List of dicts with `snapshot_name` (and optional `pvc_name`).     | See defaults                             |
+| `delete_volume_snapshots_oc_api_url`              | OpenShift/Kubernetes API URL.                                     | `https://api.example.openshift.com:6443` |
+| `delete_volume_snapshots_oc_api_token`            | OpenShift/Kubernetes API token.                                   | `<your_api_token>`                       |
+| `delete_volume_snapshots_pvc_namespace`           | Namespace containing the `VolumeSnapshot` resources to delete.    | `test-project`                           |
+| `delete_volume_snapshots_volume_snapshot_specs`   | List of dicts with `snapshot_name` (and optional `pvc_name`).     | See defaults                             |
 
 ## Example Playbook
 
@@ -32,10 +32,10 @@ The `delete_volume_snapshots` role deletes `VolumeSnapshot` resources by name fr
   gather_facts: false
   connection: local
   vars:
-    oc_api_url: "https://api.aa02-ocp.example.com:6443"
-    oc_api_token: "{{ OC_API_TOKEN }}"
-    pvc_namespace: test-project
-    volume_snapshot_specs:
+    delete_volume_snapshots_oc_api_url: "https://api.aa02-ocp.example.com:6443"
+    delete_volume_snapshots_oc_api_token: "{{ OC_API_TOKEN }}"
+    delete_volume_snapshots_pvc_namespace: test-project
+    delete_volume_snapshots_volume_snapshot_specs:
       - { snapshot_name: nfs-pvc-snapshot-1, pvc_name: test-nfs-pvc-1 }
   roles:
     - delete_volume_snapshots

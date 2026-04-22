@@ -1,8 +1,8 @@
 ---
 # defaults file for create_storageclass
 
-configure_nfs: false
-configure_nfs_flexgroup: false
-configure_iscsi: false
-configure_fcp: false
-configure_nvme_tcp: false
+create_storageclass_configure_nfs: false
+create_storageclass_configure_nfs_flexgroup: false
+create_storageclass_configure_iscsi: false
+create_storageclass_configure_fcp: false
+create_storageclass_configure_nvme_tcp: false

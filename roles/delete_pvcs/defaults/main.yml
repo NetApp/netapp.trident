@@ -1,8 +1,8 @@
 ---
 # defaults file for delete_pvcs
 
-configure_nfs: false
-configure_nfs_flexgroup: false
-configure_iscsi: false
-configure_fcp: false
-configure_nvme_tcp: false
+delete_pvcs_configure_nfs: false
+delete_pvcs_configure_nfs_flexgroup: false
+delete_pvcs_configure_iscsi: false
+delete_pvcs_configure_fcp: false
+delete_pvcs_configure_nvme_tcp: false

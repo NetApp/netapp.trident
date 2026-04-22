@@ -25,18 +25,18 @@ The `create_storageclass` role is part of the **NetApp Trident Validated Content
 
 | Variable                  | Description                                                                                                | Default   |
 |---------------------------|------------------------------------------------------------------------------------------------------------|-----------|
-| `oc_api_url`              | OpenShift/Kubernetes API URL.                                                                              |           |
-| `oc_api_token`            | OpenShift/Kubernetes API token.                                                                            |           |
-| `configure_nfs`           | Set to `true` to create the NFS StorageClass.                                                              | `false`   |
-| `configure_nfs_flexgroup` | Set to `true` to create the NFS FlexGroup StorageClass.                                                    | `false`   |
-| `configure_iscsi`         | Set to `true` to create the iSCSI StorageClass.                                                            | `false`   |
-| `configure_fcp`           | Set to `true` to create the FCP StorageClass.                                                              | `false`   |
-| `configure_nvme_tcp`      | Set to `true` to create the NVMe/TCP StorageClass.                                                         | `false`   |
-| `nfs_specs`               | NFS StorageClass spec (`sc_name`, `sc_reclaim_policy`, `sc_volume_binding_mode`, `nfs_version`).           | See defaults |
-| `nfs_flexgroup_specs`     | NFS FlexGroup StorageClass spec (`sc_name`, `sc_reclaim_policy`, `sc_volume_binding_mode`, `nfs_version`). | See defaults |
-| `iscsi_specs`             | iSCSI StorageClass spec (`sc_name`, `sc_reclaim_policy`, `sc_volume_binding_mode`).                        | See defaults |
-| `nvme_tcp_specs`          | NVMe/TCP StorageClass spec (`sc_name`, `sc_reclaim_policy`, `sc_volume_binding_mode`).                     | See defaults |
-| `fcp_specs`               | FCP StorageClass spec (`sc_name`, `sc_reclaim_policy`, `sc_volume_binding_mode`).                          | See defaults |
+| `create_storageclass_oc_api_url`              | OpenShift/Kubernetes API URL.                                                                              |           |
+| `create_storageclass_oc_api_token`            | OpenShift/Kubernetes API token.                                                                            |           |
+| `create_storageclass_configure_nfs`           | Set to `true` to create the NFS StorageClass.                                                              | `false`   |
+| `create_storageclass_configure_nfs_flexgroup` | Set to `true` to create the NFS FlexGroup StorageClass.                                                    | `false`   |
+| `create_storageclass_configure_iscsi`         | Set to `true` to create the iSCSI StorageClass.                                                            | `false`   |
+| `create_storageclass_configure_fcp`           | Set to `true` to create the FCP StorageClass.                                                              | `false`   |
+| `create_storageclass_configure_nvme_tcp`      | Set to `true` to create the NVMe/TCP StorageClass.                                                         | `false`   |
+| `create_storageclass_nfs_specs`               | NFS StorageClass spec (`sc_name`, `sc_reclaim_policy`, `sc_volume_binding_mode`, `nfs_version`).           | See defaults |
+| `create_storageclass_nfs_flexgroup_specs`     | NFS FlexGroup StorageClass spec (`sc_name`, `sc_reclaim_policy`, `sc_volume_binding_mode`, `nfs_version`). | See defaults |
+| `create_storageclass_iscsi_specs`             | iSCSI StorageClass spec (`sc_name`, `sc_reclaim_policy`, `sc_volume_binding_mode`).                        | See defaults |
+| `create_storageclass_nvme_tcp_specs`          | NVMe/TCP StorageClass spec (`sc_name`, `sc_reclaim_policy`, `sc_volume_binding_mode`).                     | See defaults |
+| `create_storageclass_fcp_specs`               | FCP StorageClass spec (`sc_name`, `sc_reclaim_policy`, `sc_volume_binding_mode`).                          | See defaults |
 
 ## Example Playbook
 
@@ -47,10 +47,10 @@ The `create_storageclass` role is part of the **NetApp Trident Validated Content
   gather_facts: false
   connection: local
   vars:
-    oc_api_url: "https://api.aa02-ocp.example.com:6443"
-    oc_api_token: "{{ OC_API_TOKEN }}"
-    configure_nfs: true
-    nfs_specs:
+    create_storageclass_oc_api_url: "https://api.aa02-ocp.example.com:6443"
+    create_storageclass_oc_api_token: "{{ OC_API_TOKEN }}"
+    create_storageclass_configure_nfs: true
+    create_storageclass_nfs_specs:
       sc_name: ontap-nfs-sc
       sc_reclaim_policy: Delete
       sc_volume_binding_mode: Immediate

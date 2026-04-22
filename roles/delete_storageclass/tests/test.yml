@@ -4,10 +4,10 @@
   gather_facts: false
   connection: local
   vars:
-    oc_api_url: "https://api.example.openshift.com:6443"
-    oc_api_token: "<your_api_token>"
-    configure_nfs: true
-    nfs_specs:
+    delete_storageclass_oc_api_url: "https://api.example.openshift.com:6443"
+    delete_storageclass_oc_api_token: "<your_api_token>"
+    delete_storageclass_configure_nfs: true
+    delete_storageclass_nfs_specs:
       sc_name: ontap-nfs-sc
   roles:
     - delete_storageclass

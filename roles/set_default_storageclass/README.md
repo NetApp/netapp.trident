@@ -22,14 +22,14 @@ The `set_default_storageclass` role marks a single Kubernetes StorageClass as th
 
 | Variable                  | Description                                                                                              | Default        |
 |---------------------------|----------------------------------------------------------------------------------------------------------|----------------|
-| `oc_api_url`              | OpenShift/Kubernetes API URL.                                                                            |                |
-| `oc_api_token`            | OpenShift/Kubernetes API token.                                                                          |                |
-| `default_sc`              | Name of the StorageClass to mark as the cluster default. Must match one of the created StorageClasses.   | `ontap-nfs-sc` |
-| `configure_nfs`           | Set to `true` if the NFS StorageClass is in scope for the default-class check.                           | `false`        |
-| `configure_nfs_flexgroup` | Set to `true` if the NFS FlexGroup StorageClass is in scope for the default-class check.                 | `false`        |
-| `configure_iscsi`         | Set to `true` if the iSCSI StorageClass is in scope for the default-class check.                         | `false`        |
-| `configure_fcp`           | Set to `true` if the FCP StorageClass is in scope for the default-class check.                           | `false`        |
-| `configure_nvme_tcp`      | Set to `true` if the NVMe/TCP StorageClass is in scope for the default-class check.                      | `false`        |
+| `set_default_storageclass_oc_api_url`              | OpenShift/Kubernetes API URL.                                                                            |                |
+| `set_default_storageclass_oc_api_token`            | OpenShift/Kubernetes API token.                                                                          |                |
+| `set_default_storageclass_default_sc`              | Name of the StorageClass to mark as the cluster default. Must match one of the created StorageClasses.   | `ontap-nfs-sc` |
+| `set_default_storageclass_configure_nfs`           | Set to `true` if the NFS StorageClass is in scope for the default-class check.                           | `false`        |
+| `set_default_storageclass_configure_nfs_flexgroup` | Set to `true` if the NFS FlexGroup StorageClass is in scope for the default-class check.                 | `false`        |
+| `set_default_storageclass_configure_iscsi`         | Set to `true` if the iSCSI StorageClass is in scope for the default-class check.                         | `false`        |
+| `set_default_storageclass_configure_fcp`           | Set to `true` if the FCP StorageClass is in scope for the default-class check.                           | `false`        |
+| `set_default_storageclass_configure_nvme_tcp`      | Set to `true` if the NVMe/TCP StorageClass is in scope for the default-class check.                      | `false`        |
 
 At least one `configure_*` flag must be `true` for this role to run.
 
@@ -42,10 +42,10 @@ At least one `configure_*` flag must be `true` for this role to run.
   gather_facts: false
   connection: local
   vars:
-    oc_api_url: "https://api.aa02-ocp.example.com:6443"
-    oc_api_token: "{{ OC_API_TOKEN }}"
-    configure_nfs: true
-    default_sc: ontap-nfs-sc
+    set_default_storageclass_oc_api_url: "https://api.aa02-ocp.example.com:6443"
+    set_default_storageclass_oc_api_token: "{{ OC_API_TOKEN }}"
+    set_default_storageclass_configure_nfs: true
+    set_default_storageclass_default_sc: ontap-nfs-sc
   roles:
     - set_default_storageclass
 ```
