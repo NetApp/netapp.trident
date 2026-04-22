@@ -24,7 +24,7 @@ The `set_default_storageclass` role marks a single Kubernetes StorageClass as th
 | `oc_api_url`    | OpenShift/Kubernetes API URL.                                                                            | `https://api.example.openshift.com:6443` |
 | `oc_api_token`  | OpenShift/Kubernetes API token.                                                                          | `<your_api_token>`     |
 | `default_sc`    | Name of the StorageClass to mark as the cluster default. Must match one of the created StorageClasses.   | `ontap-nfs-sc`         |
-| `configure_*`   | Backend enable flags (`configure_nfs`, `configure_nfs_flexgroup`, `configure_iscsi`, `configure_nvme_tcp`, `configure_fcp`). At least one must be `true` for this role to run. | `true` |
+| `configure_*`   | Backend enable flags (`configure_nfs`, `configure_nfs_flexgroup`, `configure_iscsi`, `configure_nvme_tcp`, `configure_fcp`). At least one must be `true` for this role to run. | **Required** (no default) |
 
 ## Example Playbook
 

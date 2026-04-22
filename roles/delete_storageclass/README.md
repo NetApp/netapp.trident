@@ -20,7 +20,7 @@ The `delete_storageclass` role deletes Kubernetes `StorageClass` resources (clus
 |------------------------------|----------------------------------------------------------------------|------------------------------------------|
 | `oc_api_url`                 | OpenShift/Kubernetes API URL.                                        | `https://api.example.openshift.com:6443` |
 | `oc_api_token`               | OpenShift/Kubernetes API token.                                      | `<your_api_token>`                       |
-| `configure_*`                | Backend enable flags (`configure_nfs`, `configure_nfs_flexgroup`, `configure_iscsi`, `configure_nvme_tcp`, `configure_fcp`). | `true` |
+| `configure_*`                | Backend enable flags (`configure_nfs`, `configure_nfs_flexgroup`, `configure_iscsi`, `configure_nvme_tcp`, `configure_fcp`). | **Required** (no default) |
 | `nfs_specs.sc_name`          | Name of the NFS StorageClass to delete.                              | `ontap-nfs-sc`                           |
 | `nfs_flexgroup_specs.sc_name`| Name of the NFS FlexGroup StorageClass to delete.                    | `ontap-nfs-flexgroup-sc`                 |
 | `iscsi_specs.sc_name`        | Name of the iSCSI StorageClass to delete.                            | `ontap-iscsi-sc`                         |

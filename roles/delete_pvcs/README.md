@@ -22,7 +22,7 @@ The `delete_pvcs` role deletes `PersistentVolumeClaim` resources from a namespac
 | `oc_api_url`            | OpenShift/Kubernetes API URL.                                                                         | `https://api.example.openshift.com:6443` |
 | `oc_api_token`          | OpenShift/Kubernetes API token.                                                                       | `<your_api_token>`                       |
 | `pvc_namespace`         | Namespace whose PVCs will be removed and that will itself be deleted.                                 | `test-project`                           |
-| `configure_*`           | Backend enable flags (`configure_nfs`, `configure_nfs_flexgroup`, `configure_iscsi`, `configure_nvme_tcp`, `configure_fcp`). | `true` |
+| `configure_*`           | Backend enable flags (`configure_nfs`, `configure_nfs_flexgroup`, `configure_iscsi`, `configure_nvme_tcp`, `configure_fcp`). | **Required** (no default) |
 | `nfs_specs.pvc_info`    | List of NFS PVC entries (with `pvc_name`) to delete.                                                  | See defaults                             |
 | `nfs_flexgroup_specs.pvc_info` | List of NFS FlexGroup PVC entries to delete.                                                   | See defaults                             |
 | `iscsi_specs.pvc_info`  | List of iSCSI PVC entries to delete.                                                                  | See defaults                             |

@@ -26,7 +26,7 @@ The `create_pvcs` role creates a Kubernetes namespace and provisions `Persistent
 | `oc_api_url`            | OpenShift/Kubernetes API URL.                                                                         | `https://api.example.openshift.com:6443` |
 | `oc_api_token`          | OpenShift/Kubernetes API token.                                                                       | `<your_api_token>`                       |
 | `pvc_namespace`         | Namespace where the PVCs will be created.                                                             | `test-project`                           |
-| `configure_*`           | Backend enable flags (`configure_nfs`, `configure_nfs_flexgroup`, `configure_iscsi`, `configure_nvme_tcp`, `configure_fcp`). | `true` |
+| `configure_*`           | Backend enable flags (`configure_nfs`, `configure_nfs_flexgroup`, `configure_iscsi`, `configure_nvme_tcp`, `configure_fcp`). | **Required** (no default) |
 | `nfs_specs`             | `sc_name` + `pvc_info` list for NFS PVCs.                                                             | See defaults                             |
 | `nfs_flexgroup_specs`   | `sc_name` + `pvc_info` list for NFS FlexGroup PVCs (minimum size 800Gi).                              | See defaults                             |
 | `iscsi_specs`           | `sc_name` + `pvc_info` list for iSCSI PVCs.                                                           | See defaults                             |
