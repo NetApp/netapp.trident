@@ -1,43 +1,8 @@
 ---
 # defaults file for delete_pvcs
 
-# OpenShift Cluster login information to connect to the OpenShift Cluster
-# Note: Make sure the API token is latest and is not expired
-oc_api_url: "https://api.example.openshift.com:6443"
-oc_api_token: "<your_api_token>"
-
-# Backend enable flags - user must explicitly set one or more to true.
 configure_nfs: false
 configure_nfs_flexgroup: false
 configure_iscsi: false
 configure_fcp: false
 configure_nvme_tcp: false
-
-# Namespace containing the PVCs to delete (namespace itself will also be removed)
-pvc_namespace: test-project
-
-# PVCs to delete per backend (must match names previously created)
-nfs_specs:
-  pvc_info:
-    - { pvc_name: test-nfs-pvc-1 }
-    - { pvc_name: test-nfs-pvc-2 }
-
-nfs_flexgroup_specs:
-  pvc_info:
-    - { pvc_name: test-nfs-flexgroup-pvc-1 }
-    - { pvc_name: test-nfs-flexgroup-pvc-2 }
-
-iscsi_specs:
-  pvc_info:
-    - { pvc_name: test-iscsi-pvc }
-    - { pvc_name: test-iscsi-pvc-block }
-
-nvme_tcp_specs:
-  pvc_info:
-    - { pvc_name: test-nvme-tcp-pvc }
-    - { pvc_name: test-nvme-tcp-pvc-block }
-
-fcp_specs:
-  pvc_info:
-    - { pvc_name: test-fcp-pvc }
-    - { pvc_name: test-fcp-pvc-block }

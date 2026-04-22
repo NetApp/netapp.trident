@@ -1,46 +1,8 @@
 ---
 # defaults file for create_storageclass
 
-# OpenShift Cluster login information to connect to the OpenShift Cluster
-# Note: Make sure the API token is latest and is not expired
-oc_api_url: "https://api.example.openshift.com:6443"    # Replace with your OpenShift API URL
-oc_api_token: "<your_api_token>"                        # Replace with your OpenShift API token
-
-# Backend enable flags - user must explicitly set one or more to true.
-configure_nfs: false               # Set to true to create NFS storage class
-configure_nfs_flexgroup: false     # Set to true to create NFS FlexGroup storage class
-configure_iscsi: false             # Set to true to create iSCSI storage class
-configure_fcp: false               # Set to true to create FCP storage class
-configure_nvme_tcp: false          # Set to true to create NVMe/TCP storage class
-
-# NFS Storage class specifications
-nfs_specs:
-  sc_name: ontap-nfs-sc
-  sc_reclaim_policy: Delete
-  sc_volume_binding_mode: Immediate
-  nfs_version: "4.1"
-
-# NFS FlexGroup Storage class specifications
-nfs_flexgroup_specs:
-  sc_name: ontap-nfs-flexgroup-sc
-  sc_reclaim_policy: Delete
-  sc_volume_binding_mode: Immediate
-  nfs_version: "4.1"
-
-# iSCSI Storage class specifications
-iscsi_specs:
-  sc_name: ontap-iscsi-sc
-  sc_reclaim_policy: Delete
-  sc_volume_binding_mode: Immediate
-
-# NVMe/TCP Storage class specifications
-nvme_tcp_specs:
-  sc_name: ontap-nvme-tcp-sc
-  sc_reclaim_policy: Delete
-  sc_volume_binding_mode: Immediate
-
-# FCP Storage class specifications
-fcp_specs:
-  sc_name: ontap-fcp-sc
-  sc_reclaim_policy: Delete
-  sc_volume_binding_mode: Immediate
+configure_nfs: false
+configure_nfs_flexgroup: false
+configure_iscsi: false
+configure_fcp: false
+configure_nvme_tcp: false

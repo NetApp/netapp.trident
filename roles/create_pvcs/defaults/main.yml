@@ -1,52 +1,8 @@
 ---
 # defaults file for create_pvcs
 
-# OpenShift Cluster login information to connect to the OpenShift Cluster
-# Note: Make sure the API token is latest and is not expired
-oc_api_url: "https://api.example.openshift.com:6443"
-oc_api_token: "<your_api_token>"
-
-# Backend enable flags - user must explicitly set one or more to true.
 configure_nfs: false
 configure_nfs_flexgroup: false
 configure_iscsi: false
 configure_fcp: false
 configure_nvme_tcp: false
-
-# Project/Namespace where PVCs will be provisioned
-pvc_namespace: test-project
-
-# NFS PVC specifications
-nfs_specs:
-  sc_name: ontap-nfs-sc
-  pvc_info:
-    - { pvc_name: test-nfs-pvc-1, pvc_size: 100Gi, access_modes: [ReadWriteOnce] }
-    - { pvc_name: test-nfs-pvc-2, pvc_size: 200Gi, access_modes: [ReadWriteMany] }
-
-# NFS FlexGroup PVC specifications (minimum size for NFS FlexGroup PVC is 800Gi)
-nfs_flexgroup_specs:
-  sc_name: ontap-nfs-flexgroup-sc
-  pvc_info:
-    - { pvc_name: test-nfs-flexgroup-pvc-1, pvc_size: 800Gi, access_modes: [ReadWriteOnce] }
-    - { pvc_name: test-nfs-flexgroup-pvc-2, pvc_size: 1000Gi, access_modes: [ReadWriteMany] }
-
-# iSCSI PVC specifications
-iscsi_specs:
-  sc_name: ontap-iscsi-sc
-  pvc_info:
-    - { pvc_name: test-iscsi-pvc, pvc_size: 100Gi, access_modes: [ReadWriteOnce], volume_mode: Filesystem }
-    - { pvc_name: test-iscsi-pvc-block, pvc_size: 200Gi, access_modes: [ReadWriteMany], volume_mode: Block }
-
-# NVMe/TCP PVC specifications
-nvme_tcp_specs:
-  sc_name: ontap-nvme-tcp-sc
-  pvc_info:
-    - { pvc_name: test-nvme-tcp-pvc, pvc_size: 100Gi, access_modes: [ReadWriteOnce], volume_mode: Filesystem }
-    - { pvc_name: test-nvme-tcp-pvc-block, pvc_size: 200Gi, access_modes: [ReadWriteMany], volume_mode: Block }
-
-# FCP PVC specifications
-fcp_specs:
-  sc_name: ontap-fcp-sc
-  pvc_info:
-    - { pvc_name: test-fcp-pvc, pvc_size: 100Gi, access_modes: [ReadWriteOnce], volume_mode: Filesystem }
-    - { pvc_name: test-fcp-pvc-block, pvc_size: 200Gi, access_modes: [ReadWriteMany], volume_mode: Block }

@@ -1,18 +1,7 @@
 ---
 # defaults file for set_default_storageclass
 
-# OpenShift Cluster login information to connect to the OpenShift Cluster
-# Note: Make sure the API token is latest and is not expired
-oc_api_url: "https://api.example.openshift.com:6443"
-oc_api_token: "<your_api_token>"
-
-# Backend enable flags - user must explicitly set one or more to true.
-configure_nfs: false
 configure_nfs_flexgroup: false
 configure_iscsi: false
 configure_fcp: false
 configure_nvme_tcp: false
-
-# Name of the StorageClass that should be marked as the cluster default.
-# Must match one of the created StorageClass names.
-default_sc: ontap-nfs-sc
