@@ -1,14 +1,14 @@
 ---
 # Variable file for Trident related tasks
-# Used in roles/trident/create_storageclass/tasks/main.yml
-# Used in roles/trident/set_default_storageclass/tasks/main.yml
-# Used in roles/trident/create_pvcs/tasks/main.yml
-# Used in roles/trident/create_volume_snapshotclass/tasks/main.yml
-# Used in roles/trident/create_volume_snapshots/tasks/main.yml
-# Used in roles/trident/delete_volume_snapshots/tasks/main.yml
-# Used in roles/trident/delete_volume_snapshotclass/tasks/main.yml
-# Used in roles/trident/delete_pvcs/tasks/main.yml
-# Used in roles/trident/delete_storageclass/tasks/main.yml
+# Used in roles/create_storageclass/tasks/main.yml
+# Used in roles/set_default_storageclass/tasks/main.yml
+# Used in roles/create_pvcs/tasks/main.yml
+# Used in roles/create_volume_snapshotclass/tasks/main.yml
+# Used in roles/create_volume_snapshots/tasks/main.yml
+# Used in roles/delete_volume_snapshots/tasks/main.yml
+# Used in roles/delete_volume_snapshotclass/tasks/main.yml
+# Used in roles/delete_pvcs/tasks/main.yml
+# Used in roles/delete_storageclass/tasks/main.yml
 
 configure_nfs: true               # Set to true to create NFS storage class and PVCs
 
@@ -20,7 +20,7 @@ configure_fcp: true               # Set to true to create FCP storage class and 
 
 configure_nvme_tcp: true          # Set to true to create NVMe/TCP storage class and PVCs
 
-# Note: Ensure that the backendType parameter in the storage class definitions in roles/trident/create_storageclass/tasks/main.yml matches your Trident backend type.
+# Note: Ensure that the backendType parameter in the storage class definitions in roles/create_storageclass/tasks/main.yml matches your Trident backend type.
 
 # Project/Namespace where PVCs will be provisioned
 pvc_namespace: test-project

@@ -7,11 +7,11 @@
     - vars/trident_main.yml
   connection: local
   roles:
-  - { role: trident/create_storageclass, tags: [ 'create_storageclass' ] }
-  - { role: trident/set_default_storageclass, tags: [ 'set_default_storageclass' ] }
-  - { role: trident/create_pvcs, tags: [ 'create_pvcs' ] }
-  - { role: trident/create_volume_snapshotclass, tags: [ 'create_volume_snapshotclass' ] }
-  - { role: trident/create_volume_snapshots, tags: [ 'create_volume_snapshots' ] }
+  - { role: create_storageclass, tags: [ 'create_storageclass' ] }
+  - { role: set_default_storageclass, tags: [ 'set_default_storageclass' ] }
+  - { role: create_pvcs, tags: [ 'create_pvcs' ] }
+  - { role: create_volume_snapshotclass, tags: [ 'create_volume_snapshotclass' ] }
+  - { role: create_volume_snapshots, tags: [ 'create_volume_snapshots' ] }
   tags:
   - trident_setup_tasks
 
@@ -27,10 +27,10 @@
     - vars/trident_main.yml
   connection: local
   roles:
-  - { role: trident/delete_volume_snapshots, tags: [ 'delete_volume_snapshots' ] }
-  - { role: trident/delete_volume_snapshotclass, tags: [ 'delete_volume_snapshotclass' ] }
-  - { role: trident/delete_pvcs, tags: [ 'delete_pvcs' ] }
-  - { role: trident/delete_storageclass, tags: [ 'delete_storageclass' ] }
+  - { role: delete_volume_snapshots, tags: [ 'delete_volume_snapshots' ] }
+  - { role: delete_volume_snapshotclass, tags: [ 'delete_volume_snapshotclass' ] }
+  - { role: delete_pvcs, tags: [ 'delete_pvcs' ] }
+  - { role: delete_storageclass, tags: [ 'delete_storageclass' ] }
   tags:
   - trident_cleanup_tasks
 
