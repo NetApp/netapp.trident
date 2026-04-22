@@ -1,0 +1,63 @@
+---
+# Create VolumeSnapshots of the PVCs in the specified namespace.
+
+# Get all PVCs in the namespace to validate before creating snapshots
+- name: Get all PVCs in the {{ pvc_namespace | default('') }} namespace
+  kubernetes.core.k8s_info:
+    host: "{{ oc_api_url }}"
+    api_key: "{{ oc_api_token }}"
+    validate_certs: false
+    kind: PersistentVolumeClaim
+    namespace: "{{ pvc_namespace | default('') }}"
+    api_version: v1
+  register: existing_pvcs
+  when:
+    - pvc_namespace is defined and pvc_namespace != ""
+    - volume_snapshot_specs is defined
+  tags:
+    - k8s_create_volume_snapshots
+
+# Create VolumeSnapshots of the specified PVCs in the given namespace
+- name: Create VolumeSnapshots of the specified PVCs in the {{ pvc_namespace | default('') }} namespace
+  kubernetes.core.k8s:
+    state: present
+    host: "{{ oc_api_url }}"
+    api_key: "{{ oc_api_token }}"
+    validate_certs: false
+    namespace: "{{ pvc_namespace | default('') }}"
+    definition:
+      apiVersion: snapshot.storage.k8s.io/v1
+      kind: VolumeSnapshot
+      metadata:
+        name: "{{ item.snapshot_name }}"
+      spec:
+        volumeSnapshotClassName: "{{ vol_snapshot_class_specs.name }}"
+        source:
+          persistentVolumeClaimName: "{{ item.pvc_name }}"
+  loop: "{{ volume_snapshot_specs | default([]) }}"
+  when:
+    - pvc_namespace is defined and pvc_namespace != ""
+    - vol_snapshot_class_specs is defined
+    - vol_snapshot_class_specs.name is defined and vol_snapshot_class_specs.name != ""
+    - item.snapshot_name is defined and item.snapshot_name != ""
+    - item.pvc_name is defined and item.pvc_name != ""
+    - existing_pvcs is defined
+    - existing_pvcs.resources is defined
+    - item.pvc_name in (existing_pvcs.resources | map(attribute='metadata.name') | list)
+  tags:
+    - k8s_create_volume_snapshots
+
+# Display warning for snapshots with non-existent PVCs
+- name: Display warning for VolumeSnapshots with non-existent PVCs
+  ansible.builtin.debug:
+    msg: "WARNING: Skipping snapshot '{{ item.snapshot_name }}' - PVC '{{ item.pvc_name }}' does not exist in namespace '{{ pvc_namespace | default('') }}'"
+  loop: "{{ volume_snapshot_specs | default([]) }}"
+  when:
+    - pvc_namespace is defined and pvc_namespace != ""
+    - existing_pvcs is defined
+    - existing_pvcs.resources is defined
+    - item.snapshot_name is defined and item.snapshot_name != ""
+    - item.pvc_name is defined and item.pvc_name != ""
+    - item.pvc_name not in (existing_pvcs.resources | map(attribute='metadata.name') | list)
+  tags:
+    - k8s_create_volume_snapshots

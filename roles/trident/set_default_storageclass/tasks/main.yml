@@ -1,0 +1,63 @@
+---
+# Set the default Kubernetes StorageClass.
+
+# Get all existing storage classes to check for current default
+- name: Get all existing storage classes
+  kubernetes.core.k8s_info:
+    host: "{{ oc_api_url }}"
+    api_key: "{{ oc_api_token }}"
+    validate_certs: false
+    kind: StorageClass
+    api_version: storage.k8s.io/v1
+  register: existing_storage_classes
+  when:
+    - default_sc is defined and default_sc != ""
+    - configure_nfs or configure_nfs_flexgroup or configure_iscsi or configure_nvme_tcp or configure_fcp
+  tags:
+    - k8s_set_default_storage_class
+
+# Remove default annotation from any existing default storage classes
+- name: Remove default annotation from existing default storage classes
+  kubernetes.core.k8s:
+    state: present
+    host: "{{ oc_api_url }}"
+    api_key: "{{ oc_api_token }}"
+    validate_certs: false
+    kind: StorageClass
+    api_version: storage.k8s.io/v1
+    name: "{{ item.metadata.name }}"
+    merge_type: strategic-merge
+    definition:
+      metadata:
+        annotations:
+          storageclass.kubernetes.io/is-default-class: "false"
+  loop: "{{ existing_storage_classes.resources | default([]) }}"
+  when:
+    - default_sc is defined and default_sc != ""
+    - configure_nfs or configure_nfs_flexgroup or configure_iscsi or configure_nvme_tcp or configure_fcp
+    - item.metadata.annotations is defined
+    - item.metadata.annotations['storageclass.kubernetes.io/is-default-class'] is defined
+    - item.metadata.annotations['storageclass.kubernetes.io/is-default-class'] | string == "true"
+  tags:
+    - k8s_set_default_storage_class
+
+# Set one of the created storage classes as the default storage class
+- name: Set {{ default_sc | default('') }} as the default storage class
+  kubernetes.core.k8s:
+    state: present
+    host: "{{ oc_api_url }}"
+    api_key: "{{ oc_api_token }}"
+    validate_certs: false
+    kind: StorageClass
+    api_version: storage.k8s.io/v1
+    name: "{{ default_sc }}"
+    merge_type: strategic-merge
+    definition:
+      metadata:
+        annotations:
+          storageclass.kubernetes.io/is-default-class: "true"
+  when:
+    - default_sc is defined and default_sc != ""
+    - configure_nfs or configure_nfs_flexgroup or configure_iscsi or configure_nvme_tcp or configure_fcp
+  tags:
+    - k8s_set_default_storage_class

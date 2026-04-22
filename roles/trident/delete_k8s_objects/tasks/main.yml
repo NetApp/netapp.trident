@@ -1,5 +1,5 @@
 ---
-# Delete Kubernetes Objects like VolumeSnapshots, PersistentVolumeClaims, and StorageClasses created by the create_k8s_objects role.
+# Delete Kubernetes Objects like VolumeSnapshots, PersistentVolumeClaims, and StorageClasses created by the create_storageclass, create_pvcs, create_volume_snapshotclass, and create_volume_snapshots roles.
 
 # Delete VolumeSnapshots of the specified PVCs from the given namespace
 - name: Delete VolumeSnapshots of the specified PVCs from {{ pvc_namespace | default('') }} namespace

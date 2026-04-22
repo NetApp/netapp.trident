@@ -7,7 +7,11 @@
     - vars/trident_main.yml
   connection: local
   roles:
-  - { role: trident/create_k8s_objects, tags: [ 'create_k8s_objects' ] }
+  - { role: trident/create_storageclass, tags: [ 'create_storageclass' ] }
+  - { role: trident/set_default_storageclass, tags: [ 'set_default_storageclass' ] }
+  - { role: trident/create_pvcs, tags: [ 'create_pvcs' ] }
+  - { role: trident/create_volume_snapshotclass, tags: [ 'create_volume_snapshotclass' ] }
+  - { role: trident/create_volume_snapshots, tags: [ 'create_volume_snapshots' ] }
   tags:
   - trident_setup_tasks
 
@@ -30,5 +34,5 @@
 # Note: To execute this playbook, run the following command from the directory where this file is located:
 # ansible-playbook Setup_Trident_tasks.yml -e @vars/trident_main.yml -t trident_cleanup_tasks
 # Ensure that the vars/trident_main.yml file is updated with the desired configuration before executing the playbook.
-# Warning: Deleting the Kubernetes objects will remove the PVCs and StorageClasses created by the create_k8s_objects role.
+# Warning: Deleting the Kubernetes objects will remove the PVCs and StorageClasses created by the create_storageclass, create_pvcs, create_volume_snapshotclass, and create_volume_snapshots roles.
 # Make sure to back up any important data before running the delete playbook.
