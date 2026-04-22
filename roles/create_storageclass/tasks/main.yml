@@ -1,13 +1,30 @@
 ---
 # Create Kubernetes StorageClasses using NetApp Trident as the provisioner.
 
+# Preflight: verify required variables are defined and not empty.
+- name: Verify required variables are defined and not empty
+  ansible.builtin.fail:
+    msg: "Required variable '{{ item }}' is not defined or empty"
+  when: "vars[item] is not defined or (vars[item] | length == 0)"
+  loop:
+    - oc_api_url
+    - oc_api_token
+
+# Define a YAML anchor for OpenShift/Kubernetes API login info.
+# Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
+# across every k8s task.
+- name: Define anchor for OpenShift/Kubernetes API login info
+  ansible.builtin.set_fact:
+    k8s_auth: &k8s_auth
+      host: "{{ oc_api_url }}"
+      api_key: "{{ oc_api_token }}"
+      validate_certs: false
+
 # Create NFS storage class with specified volume binding mode
 - name: Create NFS storage class with {{ nfs_specs.sc_volume_binding_mode | default('') }} volume binding mode
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: present
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     definition:
       apiVersion: storage.k8s.io/v1
       kind: StorageClass
@@ -37,10 +54,8 @@
 # Create NFS FlexGroup storage class with specified volume binding mode
 - name: Create NFS FlexGroup storage class with {{ nfs_flexgroup_specs.sc_volume_binding_mode | default('') }} volume binding mode
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: present
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     definition:
       apiVersion: storage.k8s.io/v1
       kind: StorageClass
@@ -70,10 +85,8 @@
 # Create iSCSI storage class with specified volume binding mode
 - name: Create iSCSI storage class with {{ iscsi_specs.sc_volume_binding_mode | default('') }} volume binding mode
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: present
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     definition:
       apiVersion: storage.k8s.io/v1
       kind: StorageClass
@@ -101,10 +114,8 @@
 # Create NVMe/TCP storage class with specified volume binding mode
 - name: Create NVMe/TCP storage class with {{ nvme_tcp_specs.sc_volume_binding_mode | default('') }} volume binding mode
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: present
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     definition:
       apiVersion: storage.k8s.io/v1
       kind: StorageClass
@@ -132,10 +143,8 @@
 # Create FCP storage class with specified volume binding mode
 - name: Create FCP storage class with {{ fcp_specs.sc_volume_binding_mode | default('') }} volume binding mode
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: present
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     definition:
       apiVersion: storage.k8s.io/v1
       kind: StorageClass

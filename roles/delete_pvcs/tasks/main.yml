@@ -1,13 +1,31 @@
 ---
 # Delete PersistentVolumeClaims (PVCs) from the specified namespace and remove the namespace.
 
+# Preflight: verify required variables are defined and not empty.
+- name: Verify required variables are defined and not empty
+  ansible.builtin.fail:
+    msg: "Required variable '{{ item }}' is not defined or empty"
+  when: "vars[item] is not defined or (vars[item] | length == 0)"
+  loop:
+    - oc_api_url
+    - oc_api_token
+    - pvc_namespace
+
+# Define a YAML anchor for OpenShift/Kubernetes API login info.
+# Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
+# across every k8s task.
+- name: Define anchor for OpenShift/Kubernetes API login info
+  ansible.builtin.set_fact:
+    k8s_auth: &k8s_auth
+      host: "{{ oc_api_url }}"
+      api_key: "{{ oc_api_token }}"
+      validate_certs: false
+
 # Delete PVCs with NFS storage class from the specified namespace
 - name: Delete NFS PVCs from {{ pvc_namespace | default('') }} namespace
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: absent
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: PersistentVolumeClaim
     namespace: "{{ pvc_namespace | default('') }}"
     name: "{{ item.pvc_name }}"
@@ -23,10 +41,8 @@
 # Delete PVCs with NFS FlexGroup storage class from the specified namespace
 - name: Delete NFS FlexGroup PVCs from {{ pvc_namespace | default('') }} namespace
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: absent
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: PersistentVolumeClaim
     namespace: "{{ pvc_namespace | default('') }}"
     name: "{{ item.pvc_name }}"
@@ -41,10 +57,8 @@
 # Delete PVCs with iSCSI storage class from the specified namespace
 - name: Delete iSCSI PVCs from {{ pvc_namespace | default('') }} namespace
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: absent
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: PersistentVolumeClaim
     namespace: "{{ pvc_namespace | default('') }}"
     name: "{{ item.pvc_name }}"
@@ -59,10 +73,8 @@
 # Delete PVCs with NVMe/TCP storage class from the specified namespace
 - name: Delete NVMe/TCP PVCs from {{ pvc_namespace | default('') }} namespace
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: absent
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: PersistentVolumeClaim
     namespace: "{{ pvc_namespace | default('') }}"
     name: "{{ item.pvc_name }}"
@@ -77,10 +89,8 @@
 # Delete PVCs with FCP storage class from the specified namespace
 - name: Delete FCP PVCs from {{ pvc_namespace | default('') }} namespace
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: absent
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: PersistentVolumeClaim
     namespace: "{{ pvc_namespace | default('') }}"
     name: "{{ item.pvc_name }}"
@@ -95,10 +105,8 @@
 # Delete namespace that was created for provisioning PVCs
 - name: Delete namespace {{ pvc_namespace | default('') }}
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: absent
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: Namespace
     name: "{{ pvc_namespace | default('') }}"
   when: pvc_namespace is defined and pvc_namespace != ""

@@ -1,12 +1,30 @@
 ---
 # Set the default Kubernetes StorageClass.
 
+# Preflight: verify required variables are defined and not empty.
+- name: Verify required variables are defined and not empty
+  ansible.builtin.fail:
+    msg: "Required variable '{{ item }}' is not defined or empty"
+  when: "vars[item] is not defined or (vars[item] | length == 0)"
+  loop:
+    - oc_api_url
+    - oc_api_token
+    - default_sc
+
+# Define a YAML anchor for OpenShift/Kubernetes API login info.
+# Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
+# across every k8s task.
+- name: Define anchor for OpenShift/Kubernetes API login info
+  ansible.builtin.set_fact:
+    k8s_auth: &k8s_auth
+      host: "{{ oc_api_url }}"
+      api_key: "{{ oc_api_token }}"
+      validate_certs: false
+
 # Get all existing storage classes to check for current default
 - name: Get all existing storage classes
   kubernetes.core.k8s_info:
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
+    <<: *k8s_auth
     kind: StorageClass
     api_version: storage.k8s.io/v1
   register: existing_storage_classes
@@ -19,10 +37,8 @@
 # Remove default annotation from any existing default storage classes
 - name: Remove default annotation from existing default storage classes
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: present
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: StorageClass
     api_version: storage.k8s.io/v1
     name: "{{ item.metadata.name }}"
@@ -44,10 +60,8 @@
 # Set one of the created storage classes as the default storage class
 - name: Set {{ default_sc | default('') }} as the default storage class
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: present
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: StorageClass
     api_version: storage.k8s.io/v1
     name: "{{ default_sc }}"

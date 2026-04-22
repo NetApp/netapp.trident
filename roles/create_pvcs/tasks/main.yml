@@ -1,13 +1,31 @@
 ---
 # Create PersistentVolumeClaims (PVCs) using the Trident StorageClasses.
 
+# Preflight: verify required variables are defined and not empty.
+- name: Verify required variables are defined and not empty
+  ansible.builtin.fail:
+    msg: "Required variable '{{ item }}' is not defined or empty"
+  when: "vars[item] is not defined or (vars[item] | length == 0)"
+  loop:
+    - oc_api_url
+    - oc_api_token
+    - pvc_namespace
+
+# Define a YAML anchor for OpenShift/Kubernetes API login info.
+# Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
+# across every k8s task.
+- name: Define anchor for OpenShift/Kubernetes API login info
+  ansible.builtin.set_fact:
+    k8s_auth: &k8s_auth
+      host: "{{ oc_api_url }}"
+      api_key: "{{ oc_api_token }}"
+      validate_certs: false
+
 # Create a new project/namespace for creating PVCs
 - name: Create a new project/namespace for creating PVCs
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: present
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     definition:
       apiVersion: v1
       kind: Namespace
@@ -22,10 +40,8 @@
 # Create PVCs with NFS storage class in the specified namespace
 - name: Create PVCs with NFS storage class in the {{ pvc_namespace | default('') }} namespace
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: present
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     namespace: "{{ pvc_namespace | default('') }}"
     definition:
       apiVersion: v1
@@ -54,10 +70,8 @@
 # Create PVCs with NFS FlexGroup storage class in the specified namespace
 - name: Create PVCs with NFS FlexGroup storage class in the {{ pvc_namespace | default('') }} namespace
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: present
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     namespace: "{{ pvc_namespace | default('') }}"
     definition:
       apiVersion: v1
@@ -115,10 +129,8 @@
 # Create PVCs with iSCSI storage class in the specified namespace
 - name: Create PVCs with iSCSI storage class in the {{ pvc_namespace | default('') }} namespace
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: present
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     namespace: "{{ pvc_namespace | default('') }}"
     definition:
       apiVersion: v1
@@ -155,7 +167,7 @@
     - iscsi_specs is defined
     - item.pvc_name is defined and item.pvc_name != ""
     - item.access_modes is defined and item.access_modes | length > 0
-    - 'ReadWriteMany' in item.access_modes
+    - "'ReadWriteMany' in item.access_modes"
     - (item.volume_mode | default('Filesystem')) == 'Filesystem'
   tags:
     - k8s_create_iscsi_pvcs
@@ -163,10 +175,8 @@
 # Create PVCs with NVMe/TCP storage class in the specified namespace
 - name: Create PVCs with NVMe/TCP storage class in the {{ pvc_namespace | default('') }} namespace
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: present
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     namespace: "{{ pvc_namespace | default('') }}"
     definition:
       apiVersion: v1
@@ -203,7 +213,7 @@
     - nvme_tcp_specs is defined
     - item.pvc_name is defined and item.pvc_name != ""
     - item.access_modes is defined and item.access_modes | length > 0
-    - 'ReadWriteMany' in item.access_modes
+    - "'ReadWriteMany' in item.access_modes"
     - (item.volume_mode | default('Filesystem')) == 'Filesystem'
   tags:
     - k8s_create_nvme_tcp_pvcs
@@ -211,10 +221,8 @@
 # Create PVCs with FCP storage class in the specified namespace
 - name: Create PVCs with FCP storage class in the {{ pvc_namespace | default('') }} namespace
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: present
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     namespace: "{{ pvc_namespace | default('') }}"
     definition:
       apiVersion: v1
@@ -251,7 +259,7 @@
     - fcp_specs is defined
     - item.pvc_name is defined and item.pvc_name != ""
     - item.access_modes is defined and item.access_modes | length > 0
-    - 'ReadWriteMany' in item.access_modes
+    - "'ReadWriteMany' in item.access_modes"
     - (item.volume_mode | default('Filesystem')) == 'Filesystem'
   tags:
     - k8s_create_fcp_pvcs

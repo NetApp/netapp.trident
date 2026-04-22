@@ -1,13 +1,30 @@
 ---
 # Delete StorageClasses (cluster-scoped resources) created for each backend (NFS, NFS FlexGroup, iSCSI, NVMe/TCP, FCP).
 
+# Preflight: verify required variables are defined and not empty.
+- name: Verify required variables are defined and not empty
+  ansible.builtin.fail:
+    msg: "Required variable '{{ item }}' is not defined or empty"
+  when: "vars[item] is not defined or (vars[item] | length == 0)"
+  loop:
+    - oc_api_url
+    - oc_api_token
+
+# Define a YAML anchor for OpenShift/Kubernetes API login info.
+# Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
+# across every k8s task.
+- name: Define anchor for OpenShift/Kubernetes API login info
+  ansible.builtin.set_fact:
+    k8s_auth: &k8s_auth
+      host: "{{ oc_api_url }}"
+      api_key: "{{ oc_api_token }}"
+      validate_certs: false
+
 # Delete NFS StorageClass
 - name: Delete NFS StorageClass {{ nfs_specs.sc_name | default('') }}
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: absent
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: StorageClass
     name: "{{ nfs_specs.sc_name | default('') }}"
   when:
@@ -21,10 +38,8 @@
 # Delete NFS FlexGroup StorageClass
 - name: Delete NFS FlexGroup StorageClass {{ nfs_flexgroup_specs.sc_name | default('') }}
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: absent
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: StorageClass
     name: "{{ nfs_flexgroup_specs.sc_name | default('') }}"
   when:
@@ -37,10 +52,8 @@
 # Delete iSCSI StorageClass
 - name: Delete iSCSI StorageClass {{ iscsi_specs.sc_name | default('') }}
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: absent
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: StorageClass
     name: "{{ iscsi_specs.sc_name | default('') }}"
   when:
@@ -53,10 +66,8 @@
 # Delete NVMe/TCP StorageClass
 - name: Delete NVMe/TCP StorageClass {{ nvme_tcp_specs.sc_name | default('') }}
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: absent
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: StorageClass
     name: "{{ nvme_tcp_specs.sc_name | default('') }}"
   when:
@@ -69,10 +80,8 @@
 # Delete FCP StorageClass
 - name: Delete FCP StorageClass {{ fcp_specs.sc_name | default('') }}
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: absent
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: StorageClass
     name: "{{ fcp_specs.sc_name | default('') }}"
   when:

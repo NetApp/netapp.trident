@@ -1,13 +1,31 @@
 ---
 # Delete VolumeSnapshotClass (cluster-scoped resource).
 
+# Preflight: verify required variables are defined and not empty.
+- name: Verify required variables are defined and not empty
+  ansible.builtin.fail:
+    msg: "Required variable '{{ item }}' is not defined or empty"
+  when: "vars[item] is not defined or (vars[item] | length == 0)"
+  loop:
+    - oc_api_url
+    - oc_api_token
+    - vol_snapshot_class_specs
+
+# Define a YAML anchor for OpenShift/Kubernetes API login info.
+# Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
+# across every k8s task.
+- name: Define anchor for OpenShift/Kubernetes API login info
+  ansible.builtin.set_fact:
+    k8s_auth: &k8s_auth
+      host: "{{ oc_api_url }}"
+      api_key: "{{ oc_api_token }}"
+      validate_certs: false
+
 # Delete VolumeSnapshotClass (cluster-scoped resource)
 - name: Delete VolumeSnapshotClass {{ vol_snapshot_class_specs.name | default('') }}
   kubernetes.core.k8s:
+    <<: *k8s_auth
     state: absent
-    host: "{{ oc_api_url }}"
-    api_key: "{{ oc_api_token }}"
-    validate_certs: false
     kind: VolumeSnapshotClass
     name: "{{ vol_snapshot_class_specs.name | default('') }}"
   when:
