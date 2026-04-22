@@ -13,7 +13,7 @@ The `create_volume_snapshots` role creates `VolumeSnapshot` resources for existi
 ## Requirements
 
 * Ansible 2.15 or newer.
-* `kubernetes.core` collection installed.
+* The [Kubernetes.Core](https://docs.ansible.com/projects/ansible/latest/collections/kubernetes/core/index.html#plugins-in-kubernetes-core) Ansible collection is installed.
 * OpenShift/Kubernetes cluster reachable via API URL and valid API token.
 * Source PVCs already provisioned in `pvc_namespace` (typically via the `create_pvcs` role).
 * `VolumeSnapshotClass` already created (typically via the `create_volume_snapshotclass` role).

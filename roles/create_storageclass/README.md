@@ -17,7 +17,7 @@ The `create_storageclass` role is part of the **NetApp Trident Validated Content
 
 * Ansible v2.16.0 or newer
 * Python 3.12 or newer
-* `kubernetes.core` collection installed.
+* The [Kubernetes.Core](https://docs.ansible.com/projects/ansible/latest/collections/kubernetes/core/index.html#plugins-in-kubernetes-core) Ansible collection is installed.
 * OpenShift/Kubernetes cluster reachable via API URL and valid API token.
 * NetApp Trident installed and configured in the cluster with matching backend types.
 

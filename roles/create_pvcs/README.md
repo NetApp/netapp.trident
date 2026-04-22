@@ -15,7 +15,7 @@ The `create_pvcs` role creates a Kubernetes namespace and provisions `Persistent
 ## Requirements
 
 * Ansible 2.15 or newer.
-* `kubernetes.core` collection installed.
+* The [Kubernetes.Core](https://docs.ansible.com/projects/ansible/latest/collections/kubernetes/core/index.html#plugins-in-kubernetes-core) Ansible collection is installed.
 * OpenShift/Kubernetes cluster reachable via API URL and valid API token.
 * StorageClasses referenced by `sc_name` must already exist (typically created by the `create_storageclass` role).
 

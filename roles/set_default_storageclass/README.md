@@ -13,7 +13,7 @@ The `set_default_storageclass` role marks a single Kubernetes StorageClass as th
 ## Requirements
 
 * Ansible 2.15 or newer.
-* `kubernetes.core` collection installed.
+* The [Kubernetes.Core](https://docs.ansible.com/projects/ansible/latest/collections/kubernetes/core/index.html#plugins-in-kubernetes-core) Ansible collection is installed.
 * OpenShift/Kubernetes cluster reachable via API URL and valid API token.
 * The target StorageClass must already exist (typically created by the `create_storageclass` role).
 

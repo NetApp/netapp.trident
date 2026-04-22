@@ -12,7 +12,7 @@ The `delete_pvcs` role deletes `PersistentVolumeClaim` resources from a namespac
 ## Requirements
 
 * Ansible 2.15 or newer.
-* `kubernetes.core` collection installed.
+* The [Kubernetes.Core](https://docs.ansible.com/projects/ansible/latest/collections/kubernetes/core/index.html#plugins-in-kubernetes-core) Ansible collection is installed.
 * OpenShift/Kubernetes cluster reachable via API URL and valid API token.
 
 ## Role Variables
