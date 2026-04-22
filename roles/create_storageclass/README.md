@@ -23,9 +23,9 @@ The `create_storageclass` role is part of the **NetApp Trident Validated Content
 
 ## Role Variables
 
-| Variable                                    | Description                                                                                      | Default                                                  |
-|---------------------------------------------|--------------------------------------------------------------------------------------------------|----------------------------------------------------------|
-| `oc_api_url`                                | OpenShift/Kubernetes API URL.                                                                    |                                                          |
+| Variable                                              | Description                                                                                      | Default                                    |
+|-------------------------------------------------------|--------------------------------------------------------------------------------------------------|--------------------------------------|
+| `oc_api_url`                                | OpenShift/Kubernetes API URL.                                                                  |                                                          |
 | `oc_api_token`                              | OpenShift/Kubernetes API token.                                                                  |                                                          |
 | `configure_nfs`                             | Whether to create the NFS StorageClass.                                                          | **Required** (no default)                                |
 | `configure_nfs_flexgroup`                   | Whether to create the NFS FlexGroup StorageClass.                                                | **Required** (no default)                                |
