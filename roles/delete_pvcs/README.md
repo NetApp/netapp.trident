@@ -1,38 +1,46 @@
-# Delete PVCs Role
+# delete_pvcs role
 
 ## Overview
 
-The `delete_pvcs` role deletes `PersistentVolumeClaim` resources from a namespace and then deletes the namespace itself.
+The `delete_pvcs` role is part of the **NetApp Trident Validated Content Collection**. It deletes `PersistentVolumeClaim` resources from a namespace for the enabled backends, and then deletes the namespace itself.
 
 ## Features
 
-- Deletes PVCs per backend from `delete_pvcs_pvc_namespace` based on the `pvc_info` lists in each `*_specs` variable.
-- Deletes `delete_pvcs_pvc_namespace` after all per-backend PVC deletions.
+- Deletes PVCs per backend from `delete_pvcs_pvc_namespace` based on the `pvc_info` list inside each `*_specs` variable.
+- Deletes the `delete_pvcs_pvc_namespace` namespace after all per-backend PVC deletions complete.
 
 ## Requirements
 
-* Ansible v2.16.0 or newer
-* Python 3.12 or newer
-* The [Kubernetes.Core](https://docs.ansible.com/projects/ansible/latest/collections/kubernetes/core/index.html#plugins-in-kubernetes-core) Ansible collection is installed.
-* OpenShift/Kubernetes cluster reachable via API URL and valid API token.
+* Ansible v2.16.0 or newer.
+* Python 3.12 or newer.
+* The [kubernetes.core](https://docs.ansible.com/ansible/latest/collections/kubernetes/core/index.html) Ansible collection is installed.
+* OpenShift/Kubernetes cluster reachable via API URL and a valid API token.
 
 ## Role Variables
 
-| Variable                       | Description                                                           | Default        |
-|--------------------------------|-----------------------------------------------------------------------|----------------|
-| `delete_pvcs_oc_api_url`                   | OpenShift/Kubernetes API URL.                                         |                |
-| `delete_pvcs_oc_api_token`                 | OpenShift/Kubernetes API token.                                       |                |
-| `delete_pvcs_pvc_namespace`                | Namespace whose PVCs will be removed and that will itself be deleted. | `test-project` |
-| `delete_pvcs_configure_nfs`                | Set to `true` to delete NFS PVCs.                                     | `false`        |
-| `delete_pvcs_configure_nfs_flexgroup`      | Set to `true` to delete NFS FlexGroup PVCs.                           | `false`        |
-| `delete_pvcs_configure_iscsi`              | Set to `true` to delete iSCSI PVCs.                                   | `false`        |
-| `delete_pvcs_configure_fcp`                | Set to `true` to delete FCP PVCs.                                     | `false`        |
-| `delete_pvcs_configure_nvme_tcp`           | Set to `true` to delete NVMe/TCP PVCs.                                | `false`        |
-| `delete_pvcs_nfs_specs.pvc_info`           | List of NFS PVC entries (with `pvc_name`) to delete.                  | See defaults   |
-| `delete_pvcs_nfs_flexgroup_specs.pvc_info` | List of NFS FlexGroup PVC entries to delete.                          | See defaults   |
-| `delete_pvcs_iscsi_specs.pvc_info`         | List of iSCSI PVC entries to delete.                                  | See defaults   |
-| `delete_pvcs_nvme_tcp_specs.pvc_info`      | List of NVMe/TCP PVC entries to delete.                               | See defaults   |
-| `delete_pvcs_fcp_specs.pvc_info`           | List of FCP PVC entries to delete.                                    | See defaults   |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `delete_pvcs_oc_api_url` | OpenShift/Kubernetes API server URL. | **Required** (no default) |
+| `delete_pvcs_oc_api_token` | OpenShift/Kubernetes bearer token used to authenticate against the API. | **Required** (no default) |
+| `delete_pvcs_pvc_namespace` | Namespace whose PVCs will be removed; the namespace itself is also deleted at the end of the run. | **Required** (no default) |
+| `delete_pvcs_configure_nfs` | Set to `true` to delete the NFS PVCs listed in `delete_pvcs_nfs_specs`. | `false` |
+| `delete_pvcs_configure_nfs_flexgroup` | Set to `true` to delete the NFS FlexGroup PVCs listed in `delete_pvcs_nfs_flexgroup_specs`. | `false` |
+| `delete_pvcs_configure_iscsi` | Set to `true` to delete the iSCSI PVCs listed in `delete_pvcs_iscsi_specs`. | `false` |
+| `delete_pvcs_configure_fcp` | Set to `true` to delete the FCP PVCs listed in `delete_pvcs_fcp_specs`. | `false` |
+| `delete_pvcs_configure_nvme_tcp` | Set to `true` to delete the NVMe/TCP PVCs listed in `delete_pvcs_nvme_tcp_specs`. | `false` |
+| `delete_pvcs_nfs_specs` | Dict with `pvc_info` list of NFS PVCs to delete. | **Required** when `delete_pvcs_configure_nfs` is `true` |
+| `delete_pvcs_nfs_flexgroup_specs` | Dict with `pvc_info` list of NFS FlexGroup PVCs to delete. | **Required** when `delete_pvcs_configure_nfs_flexgroup` is `true` |
+| `delete_pvcs_iscsi_specs` | Dict with `pvc_info` list of iSCSI PVCs to delete. | **Required** when `delete_pvcs_configure_iscsi` is `true` |
+| `delete_pvcs_nvme_tcp_specs` | Dict with `pvc_info` list of NVMe/TCP PVCs to delete. | **Required** when `delete_pvcs_configure_nvme_tcp` is `true` |
+| `delete_pvcs_fcp_specs` | Dict with `pvc_info` list of FCP PVCs to delete. | **Required** when `delete_pvcs_configure_fcp` is `true` |
+
+Each entry in `pvc_info` is a dict with:
+
+| Key | Description | Default |
+|-----|-------------|---------|
+| `pvc_name` | Name of the PVC to delete from `delete_pvcs_pvc_namespace`. | **Required** (no default) |
+
+> Note: At least one `delete_pvcs_configure_*` flag must be `true`.
 
 ## Example Playbook
 
@@ -50,6 +58,7 @@ The `delete_pvcs` role deletes `PersistentVolumeClaim` resources from a namespac
     delete_pvcs_nfs_specs:
       pvc_info:
         - { pvc_name: test-nfs-pvc-1 }
+        - { pvc_name: test-nfs-pvc-2 }
   roles:
     - delete_pvcs
 ```
