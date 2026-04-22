@@ -23,7 +23,7 @@ The `create_storageclass` role is part of the **NetApp Trident Validated Content
 
 ## Role Variables
 
-| Variable                                    | Description                                                                                      | Default &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
+| Variable                                    | Description                                                                                      | Default                                                  |
 |---------------------------------------------|--------------------------------------------------------------------------------------------------|----------------------------------------------------------|
 | `oc_api_url`                                | OpenShift/Kubernetes API URL.                                                                    |                                                          |
 | `oc_api_token`                              | OpenShift/Kubernetes API token.                                                                  |                                                          |
