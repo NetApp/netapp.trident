@@ -1,0 +1,18 @@
+---
+# defaults file for delete_volume_snapshots
+
+# OpenShift Cluster login information to connect to the OpenShift Cluster
+# Note: Make sure the API token is latest and is not expired
+oc_api_url: "https://api.example.openshift.com:6443"
+oc_api_token: "<your_api_token>"
+
+# Namespace containing the VolumeSnapshots to delete
+pvc_namespace: test-project
+
+# VolumeSnapshots to delete (must match names created previously)
+volume_snapshot_specs:
+  - { snapshot_name: nfs-pvc-snapshot-1, pvc_name: test-nfs-pvc-1 }
+  - { snapshot_name: nfs-flexgroup-pvc-snapshot-1, pvc_name: test-nfs-flexgroup-pvc-1 }
+  - { snapshot_name: iscsi-pvc-snapshot-1, pvc_name: test-iscsi-pvc }
+  - { snapshot_name: nvme-tcp-pvc-snapshot-1, pvc_name: test-nvme-tcp-pvc }
+  - { snapshot_name: fcp-pvc-snapshot-1, pvc_name: test-fcp-pvc }

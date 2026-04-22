@@ -48,21 +48,15 @@ ansible-galaxy collection install netapp.trident:==1.0.0
 
 See [using Ansible collections](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html) for more details.
 
-### Running the playbook
+### Running the roles
 
-To configure Kubernetes objects using NetApp Trident:
+Each role under `roles/` is self-contained with its own `defaults/main.yml`, `tests/test.yml`, and `README.md`. Create a playbook (or reuse a role's `tests/test.yml`) that imports the role(s) you need, and override variables as required.
 
-```bash
-ansible-playbook Setup_Trident_tasks.yml -e @vars/trident_main.yml -t trident_setup_tasks
-```
+To create Kubernetes objects (StorageClasses, PVCs, VolumeSnapshotClasses, VolumeSnapshots), write a playbook that includes (in this order): `create_storageclass`, `set_default_storageclass`, `create_pvcs`, `create_volume_snapshotclass`, `create_volume_snapshots`.
 
-To delete the created Kubernetes objects:
+To delete them, include (in this order): `delete_volume_snapshots`, `delete_volume_snapshotclass`, `delete_pvcs`, `delete_storageclass`.
 
-```bash
-ansible-playbook Setup_Trident_tasks.yml -e @vars/trident_main.yml -t trident_cleanup_tasks
-```
-
-Update `vars/trident_main.yml` with your desired configuration before running the playbook.
+Refer to each role's `README.md` for variables, defaults, and an example playbook.
 
 ## Release notes
 

@@ -1,0 +1,15 @@
+---
+- name: Test delete_pvcs role
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    oc_api_url: "https://api.example.openshift.com:6443"
+    oc_api_token: "<your_api_token>"
+    pvc_namespace: test-project
+    configure_nfs: true
+    nfs_specs:
+      pvc_info:
+        - { pvc_name: test-nfs-pvc-1 }
+  roles:
+    - delete_pvcs

@@ -1,0 +1,13 @@
+---
+# defaults file for create_volume_snapshotclass
+
+# OpenShift Cluster login information to connect to the OpenShift Cluster
+# Note: Make sure the API token is latest and is not expired
+oc_api_url: "https://api.example.openshift.com:6443"
+oc_api_token: "<your_api_token>"
+
+# VolumeSnapshotClass specifications
+# This is a cluster-scoped resource and is not namespaced.
+vol_snapshot_class_specs:
+  name: test-ontap-snapshot-class   # Name of the VolumeSnapshotClass to be created
+  deletion_policy: Delete           # Options: Retain or Delete

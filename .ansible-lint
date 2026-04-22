@@ -1,5 +1,1 @@
 profile: production
-
-exclude_paths:
-  - vars/
-  - group_vars/

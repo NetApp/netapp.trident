@@ -1,0 +1,15 @@
+---
+- name: Test create_volume_snapshots role
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    oc_api_url: "https://api.example.openshift.com:6443"
+    oc_api_token: "<your_api_token>"
+    pvc_namespace: test-project
+    vol_snapshot_class_specs:
+      name: test-ontap-snapshot-class
+    volume_snapshot_specs:
+      - { snapshot_name: nfs-pvc-snapshot-1, pvc_name: test-nfs-pvc-1 }
+  roles:
+    - create_volume_snapshots

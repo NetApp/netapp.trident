@@ -1,8 +1,0 @@
----
-# Make sure to encrypt this file using ansible-vault to protect sensitive information
-# ansible-vault encrypt group_vars/all/vault.yml
-
-# OpenShift Cluster login information to connect to the OpenShift Cluster
-# Note: Make sure the API token is latest and is not expired
-oc_api_url: "https://api.aa02-ocp.flexpodb4.cisco.com:6443"    # Replace with your OpenShift API URL
-oc_api_token: "<your_api_token>"                               # Replace with your OpenShift API token

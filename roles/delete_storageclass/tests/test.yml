@@ -1,0 +1,13 @@
+---
+- name: Test delete_storageclass role
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    oc_api_url: "https://api.example.openshift.com:6443"
+    oc_api_token: "<your_api_token>"
+    configure_nfs: true
+    nfs_specs:
+      sc_name: ontap-nfs-sc
+  roles:
+    - delete_storageclass

@@ -1,0 +1,12 @@
+---
+- name: Test delete_volume_snapshotclass role
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    oc_api_url: "https://api.example.openshift.com:6443"
+    oc_api_token: "<your_api_token>"
+    vol_snapshot_class_specs:
+      name: test-ontap-snapshot-class
+  roles:
+    - delete_volume_snapshotclass
