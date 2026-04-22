@@ -6,11 +6,12 @@
 oc_api_url: "https://api.example.openshift.com:6443"    # Replace with your OpenShift API URL
 oc_api_token: "<your_api_token>"                        # Replace with your OpenShift API token
 
-configure_nfs: true               # Set to true to create NFS storage class
-configure_nfs_flexgroup: true     # Set to true to create NFS FlexGroup storage class
-configure_iscsi: true             # Set to true to create iSCSI storage class
-configure_fcp: true               # Set to true to create FCP storage class
-configure_nvme_tcp: true          # Set to true to create NVMe/TCP storage class
+# Backend enable flags - user must explicitly set one or more to true.
+configure_nfs: false               # Set to true to create NFS storage class
+configure_nfs_flexgroup: false     # Set to true to create NFS FlexGroup storage class
+configure_iscsi: false             # Set to true to create iSCSI storage class
+configure_fcp: false               # Set to true to create FCP storage class
+configure_nvme_tcp: false          # Set to true to create NVMe/TCP storage class
 
 # NFS Storage class specifications
 nfs_specs:

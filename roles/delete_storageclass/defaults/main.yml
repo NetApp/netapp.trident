@@ -6,11 +6,12 @@
 oc_api_url: "https://api.example.openshift.com:6443"
 oc_api_token: "<your_api_token>"
 
-configure_nfs: true
-configure_nfs_flexgroup: true
-configure_iscsi: true
-configure_fcp: true
-configure_nvme_tcp: true
+# Backend enable flags - user must explicitly set one or more to true.
+configure_nfs: false
+configure_nfs_flexgroup: false
+configure_iscsi: false
+configure_fcp: false
+configure_nvme_tcp: false
 
 # StorageClasses to delete per backend (sc_name must match the previously created StorageClass)
 nfs_specs:
