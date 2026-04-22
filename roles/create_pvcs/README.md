@@ -1,4 +1,4 @@
-# create_pvcs role
+# Create PVCs Role
 
 ## Overview
 
@@ -14,24 +14,29 @@ The `create_pvcs` role creates a Kubernetes namespace and provisions `Persistent
 
 ## Requirements
 
-* Ansible 2.15 or newer.
+* Ansible v2.16.0 or newer
+* Python 3.12 or newer
 * The [Kubernetes.Core](https://docs.ansible.com/projects/ansible/latest/collections/kubernetes/core/index.html#plugins-in-kubernetes-core) Ansible collection is installed.
 * OpenShift/Kubernetes cluster reachable via API URL and valid API token.
 * StorageClasses referenced by `sc_name` must already exist (typically created by the `create_storageclass` role).
 
 ## Role Variables
 
-| Variable                | Description                                                                                           | Default                                  |
-|-------------------------|-------------------------------------------------------------------------------------------------------|------------------------------------------|
-| `oc_api_url`            | OpenShift/Kubernetes API URL.                                                                         | `https://api.example.openshift.com:6443` |
-| `oc_api_token`          | OpenShift/Kubernetes API token.                                                                       | `<your_api_token>`                       |
-| `pvc_namespace`         | Namespace where the PVCs will be created.                                                             | `test-project`                           |
-| `configure_*`           | Backend enable flags (`configure_nfs`, `configure_nfs_flexgroup`, `configure_iscsi`, `configure_nvme_tcp`, `configure_fcp`). | **Required** (no default) |
-| `nfs_specs`             | `sc_name` + `pvc_info` list for NFS PVCs.                                                             | See defaults                             |
-| `nfs_flexgroup_specs`   | `sc_name` + `pvc_info` list for NFS FlexGroup PVCs (minimum size 800Gi).                              | See defaults                             |
-| `iscsi_specs`           | `sc_name` + `pvc_info` list for iSCSI PVCs.                                                           | See defaults                             |
-| `nvme_tcp_specs`        | `sc_name` + `pvc_info` list for NVMe/TCP PVCs.                                                        | See defaults                             |
-| `fcp_specs`             | `sc_name` + `pvc_info` list for FCP PVCs.                                                             | See defaults                             |
+| Variable                  | Description                                                              | Default        |
+|---------------------------|--------------------------------------------------------------------------|----------------|
+| `oc_api_url`              | OpenShift/Kubernetes API URL.                                            |                |
+| `oc_api_token`            | OpenShift/Kubernetes API token.                                          |                |
+| `pvc_namespace`           | Namespace where the PVCs will be created.                                | `test-project` |
+| `configure_nfs`           | Set to `true` to create NFS PVCs.                                        | `false`        |
+| `configure_nfs_flexgroup` | Set to `true` to create NFS FlexGroup PVCs.                              | `false`        |
+| `configure_iscsi`         | Set to `true` to create iSCSI PVCs.                                      | `false`        |
+| `configure_fcp`           | Set to `true` to create FCP PVCs.                                        | `false`        |
+| `configure_nvme_tcp`      | Set to `true` to create NVMe/TCP PVCs.                                   | `false`        |
+| `nfs_specs`               | `sc_name` + `pvc_info` list for NFS PVCs.                                | See defaults   |
+| `nfs_flexgroup_specs`     | `sc_name` + `pvc_info` list for NFS FlexGroup PVCs (minimum size 800Gi). | See defaults   |
+| `iscsi_specs`             | `sc_name` + `pvc_info` list for iSCSI PVCs.                              | See defaults   |
+| `nvme_tcp_specs`          | `sc_name` + `pvc_info` list for NVMe/TCP PVCs.                           | See defaults   |
+| `fcp_specs`               | `sc_name` + `pvc_info` list for FCP PVCs.                                | See defaults   |
 
 Each entry in `pvc_info` accepts `pvc_name`, `pvc_size`, `access_modes`, and (for SAN backends) `volume_mode`.
 
@@ -47,6 +52,7 @@ Each entry in `pvc_info` accepts `pvc_name`, `pvc_size`, `access_modes`, and (fo
     oc_api_url: "https://api.aa02-ocp.example.com:6443"
     oc_api_token: "{{ OC_API_TOKEN }}"
     pvc_namespace: test-project
+    configure_nfs: true
     nfs_specs:
       sc_name: ontap-nfs-sc
       pvc_info:
