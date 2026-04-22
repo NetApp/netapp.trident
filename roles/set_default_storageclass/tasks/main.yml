@@ -11,6 +11,23 @@
     - set_default_storageclass_oc_api_token
     - set_default_storageclass_default_sc
 
+# Preflight: require at least one backend flag to be enabled, otherwise the
+# role would silently do nothing.
+- name: Verify at least one backend flag is enabled
+  ansible.builtin.fail:
+    msg: >-
+      At least one of set_default_storageclass_configure_nfs,
+      set_default_storageclass_configure_nfs_flexgroup,
+      set_default_storageclass_configure_iscsi,
+      set_default_storageclass_configure_nvme_tcp, or
+      set_default_storageclass_configure_fcp must be set to true.
+  when:
+    - not (set_default_storageclass_configure_nfs | default(false) | bool)
+    - not (set_default_storageclass_configure_nfs_flexgroup | default(false) | bool)
+    - not (set_default_storageclass_configure_iscsi | default(false) | bool)
+    - not (set_default_storageclass_configure_nvme_tcp | default(false) | bool)
+    - not (set_default_storageclass_configure_fcp | default(false) | bool)
+
 # Define a YAML anchor for OpenShift/Kubernetes API login info.
 # Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
 # across every k8s task.
@@ -28,9 +45,6 @@
     kind: StorageClass
     api_version: storage.k8s.io/v1
   register: existing_storage_classes
-  when:
-    - set_default_storageclass_default_sc is defined and set_default_storageclass_default_sc != ""
-    - set_default_storageclass_configure_nfs or set_default_storageclass_configure_nfs_flexgroup or set_default_storageclass_configure_iscsi or set_default_storageclass_configure_nvme_tcp or set_default_storageclass_configure_fcp
   tags:
     - k8s_set_default_storage_class
 
@@ -49,8 +63,6 @@
           storageclass.kubernetes.io/is-default-class: "false"
   loop: "{{ existing_storage_classes.resources | default([]) }}"
   when:
-    - set_default_storageclass_default_sc is defined and set_default_storageclass_default_sc != ""
-    - set_default_storageclass_configure_nfs or set_default_storageclass_configure_nfs_flexgroup or set_default_storageclass_configure_iscsi or set_default_storageclass_configure_nvme_tcp or set_default_storageclass_configure_fcp
     - item.metadata.annotations is defined
     - item.metadata.annotations['storageclass.kubernetes.io/is-default-class'] is defined
     - item.metadata.annotations['storageclass.kubernetes.io/is-default-class'] | string == "true"
@@ -70,8 +82,5 @@
       metadata:
         annotations:
           storageclass.kubernetes.io/is-default-class: "true"
-  when:
-    - set_default_storageclass_default_sc is defined and set_default_storageclass_default_sc != ""
-    - set_default_storageclass_configure_nfs or set_default_storageclass_configure_nfs_flexgroup or set_default_storageclass_configure_iscsi or set_default_storageclass_configure_nvme_tcp or set_default_storageclass_configure_fcp
   tags:
     - k8s_set_default_storage_class

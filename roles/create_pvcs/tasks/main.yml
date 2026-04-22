@@ -11,6 +11,95 @@
     - create_pvcs_oc_api_token
     - create_pvcs_pvc_namespace
 
+# Preflight: require at least one backend flag to be enabled, otherwise the
+# role would silently do nothing.
+- name: Verify at least one backend flag is enabled
+  ansible.builtin.fail:
+    msg: >-
+      At least one of create_pvcs_configure_nfs,
+      create_pvcs_configure_nfs_flexgroup,
+      create_pvcs_configure_iscsi,
+      create_pvcs_configure_nvme_tcp, or
+      create_pvcs_configure_fcp must be set to true.
+  when:
+    - not (create_pvcs_configure_nfs | default(false) | bool)
+    - not (create_pvcs_configure_nfs_flexgroup | default(false) | bool)
+    - not (create_pvcs_configure_iscsi | default(false) | bool)
+    - not (create_pvcs_configure_nvme_tcp | default(false) | bool)
+    - not (create_pvcs_configure_fcp | default(false) | bool)
+
+# Preflight: per-backend spec must be defined and non-empty when its flag is enabled.
+- name: Verify create_pvcs_nfs_specs is set when NFS is enabled
+  ansible.builtin.fail:
+    msg: "create_pvcs_nfs_specs is not defined or empty while create_pvcs_configure_nfs is true"
+  when:
+    - create_pvcs_configure_nfs | default(false) | bool
+    - create_pvcs_nfs_specs is not defined or (create_pvcs_nfs_specs | length == 0)
+
+- name: Verify create_pvcs_nfs_flexgroup_specs is set when NFS FlexGroup is enabled
+  ansible.builtin.fail:
+    msg: "create_pvcs_nfs_flexgroup_specs is not defined or empty while create_pvcs_configure_nfs_flexgroup is true"
+  when:
+    - create_pvcs_configure_nfs_flexgroup | default(false) | bool
+    - create_pvcs_nfs_flexgroup_specs is not defined or (create_pvcs_nfs_flexgroup_specs | length == 0)
+
+- name: Verify create_pvcs_iscsi_specs is set when iSCSI is enabled
+  ansible.builtin.fail:
+    msg: "create_pvcs_iscsi_specs is not defined or empty while create_pvcs_configure_iscsi is true"
+  when:
+    - create_pvcs_configure_iscsi | default(false) | bool
+    - create_pvcs_iscsi_specs is not defined or (create_pvcs_iscsi_specs | length == 0)
+
+- name: Verify create_pvcs_nvme_tcp_specs is set when NVMe/TCP is enabled
+  ansible.builtin.fail:
+    msg: "create_pvcs_nvme_tcp_specs is not defined or empty while create_pvcs_configure_nvme_tcp is true"
+  when:
+    - create_pvcs_configure_nvme_tcp | default(false) | bool
+    - create_pvcs_nvme_tcp_specs is not defined or (create_pvcs_nvme_tcp_specs | length == 0)
+
+- name: Verify create_pvcs_fcp_specs is set when FCP is enabled
+  ansible.builtin.fail:
+    msg: "create_pvcs_fcp_specs is not defined or empty while create_pvcs_configure_fcp is true"
+  when:
+    - create_pvcs_configure_fcp | default(false) | bool
+    - create_pvcs_fcp_specs is not defined or (create_pvcs_fcp_specs | length == 0)
+
+# Preflight: per-backend required nested fields must be present when its flag is enabled.
+- name: Verify create_pvcs_nfs_specs.sc_name is set
+  ansible.builtin.fail:
+    msg: "create_pvcs_nfs_specs.sc_name is not defined or empty"
+  when:
+    - create_pvcs_configure_nfs | default(false) | bool
+    - create_pvcs_nfs_specs.sc_name is not defined or (create_pvcs_nfs_specs.sc_name | length == 0)
+
+- name: Verify create_pvcs_nfs_flexgroup_specs.sc_name is set
+  ansible.builtin.fail:
+    msg: "create_pvcs_nfs_flexgroup_specs.sc_name is not defined or empty"
+  when:
+    - create_pvcs_configure_nfs_flexgroup | default(false) | bool
+    - create_pvcs_nfs_flexgroup_specs.sc_name is not defined or (create_pvcs_nfs_flexgroup_specs.sc_name | length == 0)
+
+- name: Verify create_pvcs_iscsi_specs.sc_name is set
+  ansible.builtin.fail:
+    msg: "create_pvcs_iscsi_specs.sc_name is not defined or empty"
+  when:
+    - create_pvcs_configure_iscsi | default(false) | bool
+    - create_pvcs_iscsi_specs.sc_name is not defined or (create_pvcs_iscsi_specs.sc_name | length == 0)
+
+- name: Verify create_pvcs_nvme_tcp_specs.sc_name is set
+  ansible.builtin.fail:
+    msg: "create_pvcs_nvme_tcp_specs.sc_name is not defined or empty"
+  when:
+    - create_pvcs_configure_nvme_tcp | default(false) | bool
+    - create_pvcs_nvme_tcp_specs.sc_name is not defined or (create_pvcs_nvme_tcp_specs.sc_name | length == 0)
+
+- name: Verify create_pvcs_fcp_specs.sc_name is set
+  ansible.builtin.fail:
+    msg: "create_pvcs_fcp_specs.sc_name is not defined or empty"
+  when:
+    - create_pvcs_configure_fcp | default(false) | bool
+    - create_pvcs_fcp_specs.sc_name is not defined or (create_pvcs_fcp_specs.sc_name | length == 0)
+
 # Define a YAML anchor for OpenShift/Kubernetes API login info.
 # Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
 # across every k8s task.
@@ -31,9 +120,6 @@
       kind: Namespace
       metadata:
         name: "{{ create_pvcs_pvc_namespace }}"
-  when:
-    - create_pvcs_configure_nfs or create_pvcs_configure_nfs_flexgroup or create_pvcs_configure_iscsi or create_pvcs_configure_nvme_tcp or create_pvcs_configure_fcp
-    - create_pvcs_pvc_namespace is defined and create_pvcs_pvc_namespace != ""
   tags:
     - k8s_create_pvc_namespace
 
@@ -57,10 +143,7 @@
         volumeMode: Filesystem
   loop: "{{ create_pvcs_nfs_specs.pvc_info | default([]) }}"
   when:
-    - create_pvcs_configure_nfs == true
-    - create_pvcs_nfs_specs is defined
-    - create_pvcs_nfs_specs.sc_name is defined and create_pvcs_nfs_specs.sc_name != ""
-    - create_pvcs_pvc_namespace is defined and create_pvcs_pvc_namespace != ""
+    - create_pvcs_configure_nfs | bool
     - item.pvc_name is defined and item.pvc_name != ""
     - item.pvc_size is defined and item.pvc_size != ""
     - item.access_modes is defined and item.access_modes | length > 0
@@ -87,10 +170,7 @@
         volumeMode: Filesystem
   loop: "{{ create_pvcs_nfs_flexgroup_specs.pvc_info | default([]) }}"
   when:
-    - create_pvcs_configure_nfs_flexgroup == true
-    - create_pvcs_nfs_flexgroup_specs is defined
-    - create_pvcs_nfs_flexgroup_specs.sc_name is defined and create_pvcs_nfs_flexgroup_specs.sc_name != ""
-    - create_pvcs_pvc_namespace is defined and create_pvcs_pvc_namespace != ""
+    - create_pvcs_configure_nfs_flexgroup | bool
     - item.pvc_name is defined and item.pvc_name != ""
     - item.pvc_size is defined and item.pvc_size != ""
     - item.access_modes is defined and item.access_modes | length > 0
@@ -110,8 +190,7 @@
     msg: "WARNING: Skipping PVC '{{ item.pvc_name }}' - NFS FlexGroup requires minimum size of 800Gi. Requested size: {{ item.pvc_size }}"
   loop: "{{ create_pvcs_nfs_flexgroup_specs.pvc_info | default([]) }}"
   when:
-    - create_pvcs_configure_nfs_flexgroup == true
-    - create_pvcs_nfs_flexgroup_specs is defined
+    - create_pvcs_configure_nfs_flexgroup | bool
     - item.pvc_name is defined and item.pvc_name != ""
     - item.pvc_size is defined and item.pvc_size != ""
     - >
@@ -146,10 +225,7 @@
         volumeMode: "{{ item.volume_mode | default('Filesystem') }}"
   loop: "{{ create_pvcs_iscsi_specs.pvc_info | default([]) }}"
   when:
-    - create_pvcs_configure_iscsi == true
-    - create_pvcs_iscsi_specs is defined
-    - create_pvcs_iscsi_specs.sc_name is defined and create_pvcs_iscsi_specs.sc_name != ""
-    - create_pvcs_pvc_namespace is defined and create_pvcs_pvc_namespace != ""
+    - create_pvcs_configure_iscsi | bool
     - item.pvc_name is defined and item.pvc_name != ""
     - item.pvc_size is defined and item.pvc_size != ""
     - item.access_modes is defined and item.access_modes | length > 0
@@ -163,8 +239,7 @@
     msg: "WARNING: Skipping PVC '{{ item.pvc_name }}' - iSCSI does not support ReadWriteMany (RWX) access mode with Filesystem volume mode. Use ReadWriteMany (RWX) with Block volume mode."
   loop: "{{ create_pvcs_iscsi_specs.pvc_info | default([]) }}"
   when:
-    - create_pvcs_configure_iscsi == true
-    - create_pvcs_iscsi_specs is defined
+    - create_pvcs_configure_iscsi | bool
     - item.pvc_name is defined and item.pvc_name != ""
     - item.access_modes is defined and item.access_modes | length > 0
     - "'ReadWriteMany' in item.access_modes"
@@ -192,10 +267,7 @@
         volumeMode: "{{ item.volume_mode | default('Filesystem') }}"
   loop: "{{ create_pvcs_nvme_tcp_specs.pvc_info | default([]) }}"
   when:
-    - create_pvcs_configure_nvme_tcp == true
-    - create_pvcs_nvme_tcp_specs is defined
-    - create_pvcs_nvme_tcp_specs.sc_name is defined and create_pvcs_nvme_tcp_specs.sc_name != ""
-    - create_pvcs_pvc_namespace is defined and create_pvcs_pvc_namespace != ""
+    - create_pvcs_configure_nvme_tcp | bool
     - item.pvc_name is defined and item.pvc_name != ""
     - item.pvc_size is defined and item.pvc_size != ""
     - item.access_modes is defined and item.access_modes | length > 0
@@ -209,8 +281,7 @@
     msg: "WARNING: Skipping PVC '{{ item.pvc_name }}' - NVMe/TCP does not support ReadWriteMany (RWX) access mode with Filesystem volume mode. Use ReadWriteMany (RWX) with Block volume mode."
   loop: "{{ create_pvcs_nvme_tcp_specs.pvc_info | default([]) }}"
   when:
-    - create_pvcs_configure_nvme_tcp == true
-    - create_pvcs_nvme_tcp_specs is defined
+    - create_pvcs_configure_nvme_tcp | bool
     - item.pvc_name is defined and item.pvc_name != ""
     - item.access_modes is defined and item.access_modes | length > 0
     - "'ReadWriteMany' in item.access_modes"
@@ -238,10 +309,7 @@
         volumeMode: "{{ item.volume_mode | default('Filesystem') }}"
   loop: "{{ create_pvcs_fcp_specs.pvc_info | default([]) }}"
   when:
-    - create_pvcs_configure_fcp == true
-    - create_pvcs_fcp_specs is defined
-    - create_pvcs_fcp_specs.sc_name is defined and create_pvcs_fcp_specs.sc_name != ""
-    - create_pvcs_pvc_namespace is defined and create_pvcs_pvc_namespace != ""
+    - create_pvcs_configure_fcp | bool
     - item.pvc_name is defined and item.pvc_name != ""
     - item.pvc_size is defined and item.pvc_size != ""
     - item.access_modes is defined and item.access_modes | length > 0
@@ -255,8 +323,7 @@
     msg: "WARNING: Skipping PVC '{{ item.pvc_name }}' - FCP does not support ReadWriteMany (RWX) access mode with Filesystem volume mode. Use ReadWriteMany (RWX) with Block volume mode."
   loop: "{{ create_pvcs_fcp_specs.pvc_info | default([]) }}"
   when:
-    - create_pvcs_configure_fcp == true
-    - create_pvcs_fcp_specs is defined
+    - create_pvcs_configure_fcp | bool
     - item.pvc_name is defined and item.pvc_name != ""
     - item.access_modes is defined and item.access_modes | length > 0
     - "'ReadWriteMany' in item.access_modes"

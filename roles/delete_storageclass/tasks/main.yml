@@ -10,6 +10,95 @@
     - delete_storageclass_oc_api_url
     - delete_storageclass_oc_api_token
 
+# Preflight: require at least one backend flag to be enabled, otherwise the
+# role would silently do nothing.
+- name: Verify at least one backend flag is enabled
+  ansible.builtin.fail:
+    msg: >-
+      At least one of delete_storageclass_configure_nfs,
+      delete_storageclass_configure_nfs_flexgroup,
+      delete_storageclass_configure_iscsi,
+      delete_storageclass_configure_nvme_tcp, or
+      delete_storageclass_configure_fcp must be set to true.
+  when:
+    - not (delete_storageclass_configure_nfs | default(false) | bool)
+    - not (delete_storageclass_configure_nfs_flexgroup | default(false) | bool)
+    - not (delete_storageclass_configure_iscsi | default(false) | bool)
+    - not (delete_storageclass_configure_nvme_tcp | default(false) | bool)
+    - not (delete_storageclass_configure_fcp | default(false) | bool)
+
+# Preflight: per-backend spec must be defined and non-empty when its flag is enabled.
+- name: Verify delete_storageclass_nfs_specs is set when NFS is enabled
+  ansible.builtin.fail:
+    msg: "delete_storageclass_nfs_specs is not defined or empty while delete_storageclass_configure_nfs is true"
+  when:
+    - delete_storageclass_configure_nfs | default(false) | bool
+    - delete_storageclass_nfs_specs is not defined or (delete_storageclass_nfs_specs | length == 0)
+
+- name: Verify delete_storageclass_nfs_flexgroup_specs is set when NFS FlexGroup is enabled
+  ansible.builtin.fail:
+    msg: "delete_storageclass_nfs_flexgroup_specs is not defined or empty while delete_storageclass_configure_nfs_flexgroup is true"
+  when:
+    - delete_storageclass_configure_nfs_flexgroup | default(false) | bool
+    - delete_storageclass_nfs_flexgroup_specs is not defined or (delete_storageclass_nfs_flexgroup_specs | length == 0)
+
+- name: Verify delete_storageclass_iscsi_specs is set when iSCSI is enabled
+  ansible.builtin.fail:
+    msg: "delete_storageclass_iscsi_specs is not defined or empty while delete_storageclass_configure_iscsi is true"
+  when:
+    - delete_storageclass_configure_iscsi | default(false) | bool
+    - delete_storageclass_iscsi_specs is not defined or (delete_storageclass_iscsi_specs | length == 0)
+
+- name: Verify delete_storageclass_nvme_tcp_specs is set when NVMe/TCP is enabled
+  ansible.builtin.fail:
+    msg: "delete_storageclass_nvme_tcp_specs is not defined or empty while delete_storageclass_configure_nvme_tcp is true"
+  when:
+    - delete_storageclass_configure_nvme_tcp | default(false) | bool
+    - delete_storageclass_nvme_tcp_specs is not defined or (delete_storageclass_nvme_tcp_specs | length == 0)
+
+- name: Verify delete_storageclass_fcp_specs is set when FCP is enabled
+  ansible.builtin.fail:
+    msg: "delete_storageclass_fcp_specs is not defined or empty while delete_storageclass_configure_fcp is true"
+  when:
+    - delete_storageclass_configure_fcp | default(false) | bool
+    - delete_storageclass_fcp_specs is not defined or (delete_storageclass_fcp_specs | length == 0)
+
+# Preflight: per-backend required nested fields must be present when its flag is enabled.
+- name: Verify delete_storageclass_nfs_specs.sc_name is set
+  ansible.builtin.fail:
+    msg: "delete_storageclass_nfs_specs.sc_name is not defined or empty"
+  when:
+    - delete_storageclass_configure_nfs | default(false) | bool
+    - delete_storageclass_nfs_specs.sc_name is not defined or (delete_storageclass_nfs_specs.sc_name | length == 0)
+
+- name: Verify delete_storageclass_nfs_flexgroup_specs.sc_name is set
+  ansible.builtin.fail:
+    msg: "delete_storageclass_nfs_flexgroup_specs.sc_name is not defined or empty"
+  when:
+    - delete_storageclass_configure_nfs_flexgroup | default(false) | bool
+    - delete_storageclass_nfs_flexgroup_specs.sc_name is not defined or (delete_storageclass_nfs_flexgroup_specs.sc_name | length == 0)
+
+- name: Verify delete_storageclass_iscsi_specs.sc_name is set
+  ansible.builtin.fail:
+    msg: "delete_storageclass_iscsi_specs.sc_name is not defined or empty"
+  when:
+    - delete_storageclass_configure_iscsi | default(false) | bool
+    - delete_storageclass_iscsi_specs.sc_name is not defined or (delete_storageclass_iscsi_specs.sc_name | length == 0)
+
+- name: Verify delete_storageclass_nvme_tcp_specs.sc_name is set
+  ansible.builtin.fail:
+    msg: "delete_storageclass_nvme_tcp_specs.sc_name is not defined or empty"
+  when:
+    - delete_storageclass_configure_nvme_tcp | default(false) | bool
+    - delete_storageclass_nvme_tcp_specs.sc_name is not defined or (delete_storageclass_nvme_tcp_specs.sc_name | length == 0)
+
+- name: Verify delete_storageclass_fcp_specs.sc_name is set
+  ansible.builtin.fail:
+    msg: "delete_storageclass_fcp_specs.sc_name is not defined or empty"
+  when:
+    - delete_storageclass_configure_fcp | default(false) | bool
+    - delete_storageclass_fcp_specs.sc_name is not defined or (delete_storageclass_fcp_specs.sc_name | length == 0)
+
 # Define a YAML anchor for OpenShift/Kubernetes API login info.
 # Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
 # across every k8s task.
@@ -28,9 +117,7 @@
     kind: StorageClass
     name: "{{ delete_storageclass_nfs_specs.sc_name | default('') }}"
   when:
-    - delete_storageclass_configure_nfs == true
-    - delete_storageclass_nfs_specs is defined
-    - delete_storageclass_nfs_specs.sc_name is defined and delete_storageclass_nfs_specs.sc_name != ""
+    - delete_storageclass_configure_nfs | bool
   tags:
     - k8s_delete_nfs_storage_class
 # Note: StorageClass is a cluster-scoped resource, so we do not specify a namespace.
@@ -43,9 +130,7 @@
     kind: StorageClass
     name: "{{ delete_storageclass_nfs_flexgroup_specs.sc_name | default('') }}"
   when:
-    - delete_storageclass_configure_nfs_flexgroup == true
-    - delete_storageclass_nfs_flexgroup_specs is defined
-    - delete_storageclass_nfs_flexgroup_specs.sc_name is defined and delete_storageclass_nfs_flexgroup_specs.sc_name != ""
+    - delete_storageclass_configure_nfs_flexgroup | bool
   tags:
     - k8s_delete_nfs_flexgroup_storage_class
 
@@ -57,9 +142,7 @@
     kind: StorageClass
     name: "{{ delete_storageclass_iscsi_specs.sc_name | default('') }}"
   when:
-    - delete_storageclass_configure_iscsi == true
-    - delete_storageclass_iscsi_specs is defined
-    - delete_storageclass_iscsi_specs.sc_name is defined and delete_storageclass_iscsi_specs.sc_name != ""
+    - delete_storageclass_configure_iscsi | bool
   tags:
     - k8s_delete_iscsi_storage_class
 
@@ -71,9 +154,7 @@
     kind: StorageClass
     name: "{{ delete_storageclass_nvme_tcp_specs.sc_name | default('') }}"
   when:
-    - delete_storageclass_configure_nvme_tcp == true
-    - delete_storageclass_nvme_tcp_specs is defined
-    - delete_storageclass_nvme_tcp_specs.sc_name is defined and delete_storageclass_nvme_tcp_specs.sc_name != ""
+    - delete_storageclass_configure_nvme_tcp | bool
   tags:
     - k8s_delete_nvme_tcp_storage_class
 
@@ -85,8 +166,6 @@
     kind: StorageClass
     name: "{{ delete_storageclass_fcp_specs.sc_name | default('') }}"
   when:
-    - delete_storageclass_configure_fcp == true
-    - delete_storageclass_fcp_specs is defined
-    - delete_storageclass_fcp_specs.sc_name is defined and delete_storageclass_fcp_specs.sc_name != ""
+    - delete_storageclass_configure_fcp | bool
   tags:
     - k8s_delete_fcp_storage_class

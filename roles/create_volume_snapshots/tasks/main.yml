@@ -13,6 +13,13 @@
     - create_volume_snapshots_vol_snapshot_class_specs
     - create_volume_snapshots_volume_snapshot_specs
 
+# Preflight: required nested fields in the spec.
+- name: Verify create_volume_snapshots_vol_snapshot_class_specs.name is set
+  ansible.builtin.fail:
+    msg: "create_volume_snapshots_vol_snapshot_class_specs.name is not defined or empty"
+  when:
+    - create_volume_snapshots_vol_snapshot_class_specs.name is not defined or (create_volume_snapshots_vol_snapshot_class_specs.name | length == 0)
+
 # Define a YAML anchor for OpenShift/Kubernetes API login info.
 # Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
 # across every k8s task.
@@ -31,9 +38,6 @@
     namespace: "{{ create_volume_snapshots_pvc_namespace | default('') }}"
     api_version: v1
   register: existing_pvcs
-  when:
-    - create_volume_snapshots_pvc_namespace is defined and create_volume_snapshots_pvc_namespace != ""
-    - create_volume_snapshots_volume_snapshot_specs is defined
   tags:
     - k8s_create_volume_snapshots
 
@@ -54,9 +58,6 @@
           persistentVolumeClaimName: "{{ item.pvc_name }}"
   loop: "{{ create_volume_snapshots_volume_snapshot_specs | default([]) }}"
   when:
-    - create_volume_snapshots_pvc_namespace is defined and create_volume_snapshots_pvc_namespace != ""
-    - create_volume_snapshots_vol_snapshot_class_specs is defined
-    - create_volume_snapshots_vol_snapshot_class_specs.name is defined and create_volume_snapshots_vol_snapshot_class_specs.name != ""
     - item.snapshot_name is defined and item.snapshot_name != ""
     - item.pvc_name is defined and item.pvc_name != ""
     - existing_pvcs is defined
@@ -71,7 +72,6 @@
     msg: "WARNING: Skipping snapshot '{{ item.snapshot_name }}' - PVC '{{ item.pvc_name }}' does not exist in namespace '{{ create_volume_snapshots_pvc_namespace | default('') }}'"
   loop: "{{ create_volume_snapshots_volume_snapshot_specs | default([]) }}"
   when:
-    - create_volume_snapshots_pvc_namespace is defined and create_volume_snapshots_pvc_namespace != ""
     - existing_pvcs is defined
     - existing_pvcs.resources is defined
     - item.snapshot_name is defined and item.snapshot_name != ""

@@ -10,6 +10,112 @@
     - create_storageclass_oc_api_url
     - create_storageclass_oc_api_token
 
+# Preflight: require at least one backend flag to be enabled, otherwise the
+# role would silently do nothing.
+- name: Verify at least one backend flag is enabled
+  ansible.builtin.fail:
+    msg: >-
+      At least one of create_storageclass_configure_nfs,
+      create_storageclass_configure_nfs_flexgroup,
+      create_storageclass_configure_iscsi,
+      create_storageclass_configure_nvme_tcp, or
+      create_storageclass_configure_fcp must be set to true.
+  when:
+    - not (create_storageclass_configure_nfs | default(false) | bool)
+    - not (create_storageclass_configure_nfs_flexgroup | default(false) | bool)
+    - not (create_storageclass_configure_iscsi | default(false) | bool)
+    - not (create_storageclass_configure_nvme_tcp | default(false) | bool)
+    - not (create_storageclass_configure_fcp | default(false) | bool)
+
+# Preflight: per-backend spec must be defined and non-empty when its flag is enabled.
+- name: Verify create_storageclass_nfs_specs is set when NFS is enabled
+  ansible.builtin.fail:
+    msg: "create_storageclass_nfs_specs is not defined or empty while create_storageclass_configure_nfs is true"
+  when:
+    - create_storageclass_configure_nfs | default(false) | bool
+    - create_storageclass_nfs_specs is not defined or (create_storageclass_nfs_specs | length == 0)
+
+- name: Verify create_storageclass_nfs_flexgroup_specs is set when NFS FlexGroup is enabled
+  ansible.builtin.fail:
+    msg: "create_storageclass_nfs_flexgroup_specs is not defined or empty while create_storageclass_configure_nfs_flexgroup is true"
+  when:
+    - create_storageclass_configure_nfs_flexgroup | default(false) | bool
+    - create_storageclass_nfs_flexgroup_specs is not defined or (create_storageclass_nfs_flexgroup_specs | length == 0)
+
+- name: Verify create_storageclass_iscsi_specs is set when iSCSI is enabled
+  ansible.builtin.fail:
+    msg: "create_storageclass_iscsi_specs is not defined or empty while create_storageclass_configure_iscsi is true"
+  when:
+    - create_storageclass_configure_iscsi | default(false) | bool
+    - create_storageclass_iscsi_specs is not defined or (create_storageclass_iscsi_specs | length == 0)
+
+- name: Verify create_storageclass_nvme_tcp_specs is set when NVMe/TCP is enabled
+  ansible.builtin.fail:
+    msg: "create_storageclass_nvme_tcp_specs is not defined or empty while create_storageclass_configure_nvme_tcp is true"
+  when:
+    - create_storageclass_configure_nvme_tcp | default(false) | bool
+    - create_storageclass_nvme_tcp_specs is not defined or (create_storageclass_nvme_tcp_specs | length == 0)
+
+- name: Verify create_storageclass_fcp_specs is set when FCP is enabled
+  ansible.builtin.fail:
+    msg: "create_storageclass_fcp_specs is not defined or empty while create_storageclass_configure_fcp is true"
+  when:
+    - create_storageclass_configure_fcp | default(false) | bool
+    - create_storageclass_fcp_specs is not defined or (create_storageclass_fcp_specs | length == 0)
+
+# Preflight: per-backend required nested fields must be present when its flag is enabled.
+- name: Verify required fields in create_storageclass_nfs_specs
+  ansible.builtin.fail:
+    msg: "create_storageclass_nfs_specs.{{ item }} is not defined or empty"
+  when:
+    - create_storageclass_configure_nfs | default(false) | bool
+    - create_storageclass_nfs_specs[item] is not defined or (create_storageclass_nfs_specs[item] | length == 0)
+  loop:
+    - sc_name
+    - sc_volume_binding_mode
+    - nfs_version
+
+- name: Verify required fields in create_storageclass_nfs_flexgroup_specs
+  ansible.builtin.fail:
+    msg: "create_storageclass_nfs_flexgroup_specs.{{ item }} is not defined or empty"
+  when:
+    - create_storageclass_configure_nfs_flexgroup | default(false) | bool
+    - create_storageclass_nfs_flexgroup_specs[item] is not defined or (create_storageclass_nfs_flexgroup_specs[item] | length == 0)
+  loop:
+    - sc_name
+    - sc_volume_binding_mode
+    - nfs_version
+
+- name: Verify required fields in create_storageclass_iscsi_specs
+  ansible.builtin.fail:
+    msg: "create_storageclass_iscsi_specs.{{ item }} is not defined or empty"
+  when:
+    - create_storageclass_configure_iscsi | default(false) | bool
+    - create_storageclass_iscsi_specs[item] is not defined or (create_storageclass_iscsi_specs[item] | length == 0)
+  loop:
+    - sc_name
+    - sc_volume_binding_mode
+
+- name: Verify required fields in create_storageclass_nvme_tcp_specs
+  ansible.builtin.fail:
+    msg: "create_storageclass_nvme_tcp_specs.{{ item }} is not defined or empty"
+  when:
+    - create_storageclass_configure_nvme_tcp | default(false) | bool
+    - create_storageclass_nvme_tcp_specs[item] is not defined or (create_storageclass_nvme_tcp_specs[item] | length == 0)
+  loop:
+    - sc_name
+    - sc_volume_binding_mode
+
+- name: Verify required fields in create_storageclass_fcp_specs
+  ansible.builtin.fail:
+    msg: "create_storageclass_fcp_specs.{{ item }} is not defined or empty"
+  when:
+    - create_storageclass_configure_fcp | default(false) | bool
+    - create_storageclass_fcp_specs[item] is not defined or (create_storageclass_fcp_specs[item] | length == 0)
+  loop:
+    - sc_name
+    - sc_volume_binding_mode
+
 # Define a YAML anchor for OpenShift/Kubernetes API login info.
 # Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
 # across every k8s task.
@@ -43,11 +149,7 @@
       mountOptions:
         - nfsvers="{{ create_storageclass_nfs_specs.nfs_version }}"
   when:
-    - create_storageclass_configure_nfs == true
-    - create_storageclass_nfs_specs is defined
-    - create_storageclass_nfs_specs.sc_name is defined and create_storageclass_nfs_specs.sc_name != ""
-    - create_storageclass_nfs_specs.sc_volume_binding_mode is defined and create_storageclass_nfs_specs.sc_volume_binding_mode != ""
-    - create_storageclass_nfs_specs.nfs_version is defined and create_storageclass_nfs_specs.nfs_version != ""
+    - create_storageclass_configure_nfs | bool
   tags:
     - k8s_create_nfs_storage_class
 
@@ -74,11 +176,7 @@
       mountOptions:
         - nfsvers="{{ create_storageclass_nfs_flexgroup_specs.nfs_version }}"
   when:
-    - create_storageclass_configure_nfs_flexgroup == true
-    - create_storageclass_nfs_flexgroup_specs is defined
-    - create_storageclass_nfs_flexgroup_specs.sc_name is defined and create_storageclass_nfs_flexgroup_specs.sc_name != ""
-    - create_storageclass_nfs_flexgroup_specs.sc_volume_binding_mode is defined and create_storageclass_nfs_flexgroup_specs.sc_volume_binding_mode != ""
-    - create_storageclass_nfs_flexgroup_specs.nfs_version is defined and create_storageclass_nfs_flexgroup_specs.nfs_version != ""
+    - create_storageclass_configure_nfs_flexgroup | bool
   tags:
     - k8s_create_nfs_flexgroup_storage_class
 
@@ -104,10 +202,7 @@
       reclaimPolicy: "{{ create_storageclass_iscsi_specs.sc_reclaim_policy | default('Retain') }}"
       volumeBindingMode: "{{ create_storageclass_iscsi_specs.sc_volume_binding_mode }}"
   when:
-    - create_storageclass_configure_iscsi == true
-    - create_storageclass_iscsi_specs is defined
-    - create_storageclass_iscsi_specs.sc_name is defined and create_storageclass_iscsi_specs.sc_name != ""
-    - create_storageclass_iscsi_specs.sc_volume_binding_mode is defined and create_storageclass_iscsi_specs.sc_volume_binding_mode != ""
+    - create_storageclass_configure_iscsi | bool
   tags:
     - k8s_create_iscsi_storage_class
 
@@ -133,10 +228,7 @@
       reclaimPolicy: "{{ create_storageclass_nvme_tcp_specs.sc_reclaim_policy | default('Retain') }}"
       volumeBindingMode: "{{ create_storageclass_nvme_tcp_specs.sc_volume_binding_mode }}"
   when:
-    - create_storageclass_configure_nvme_tcp == true
-    - create_storageclass_nvme_tcp_specs is defined
-    - create_storageclass_nvme_tcp_specs.sc_name is defined and create_storageclass_nvme_tcp_specs.sc_name != ""
-    - create_storageclass_nvme_tcp_specs.sc_volume_binding_mode is defined and create_storageclass_nvme_tcp_specs.sc_volume_binding_mode != ""
+    - create_storageclass_configure_nvme_tcp | bool
   tags:
     - k8s_create_nvme_tcp_storage_class
 
@@ -162,9 +254,6 @@
       reclaimPolicy: "{{ create_storageclass_fcp_specs.sc_reclaim_policy | default('Retain') }}"
       volumeBindingMode: "{{ create_storageclass_fcp_specs.sc_volume_binding_mode }}"
   when:
-    - create_storageclass_configure_fcp == true
-    - create_storageclass_fcp_specs is defined
-    - create_storageclass_fcp_specs.sc_name is defined and create_storageclass_fcp_specs.sc_name != ""
-    - create_storageclass_fcp_specs.sc_volume_binding_mode is defined and create_storageclass_fcp_specs.sc_volume_binding_mode != ""
+    - create_storageclass_configure_fcp | bool
   tags:
     - k8s_create_fcp_storage_class

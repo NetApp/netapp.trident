@@ -11,6 +11,13 @@
     - delete_volume_snapshotclass_oc_api_token
     - delete_volume_snapshotclass_vol_snapshot_class_specs
 
+# Preflight: required nested fields in the spec.
+- name: Verify delete_volume_snapshotclass_vol_snapshot_class_specs.name is set
+  ansible.builtin.fail:
+    msg: "delete_volume_snapshotclass_vol_snapshot_class_specs.name is not defined or empty"
+  when:
+    - delete_volume_snapshotclass_vol_snapshot_class_specs.name is not defined or (delete_volume_snapshotclass_vol_snapshot_class_specs.name | length == 0)
+
 # Define a YAML anchor for OpenShift/Kubernetes API login info.
 # Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
 # across every k8s task.
@@ -28,9 +35,6 @@
     state: absent
     kind: VolumeSnapshotClass
     name: "{{ delete_volume_snapshotclass_vol_snapshot_class_specs.name | default('') }}"
-  when:
-    - delete_volume_snapshotclass_vol_snapshot_class_specs is defined
-    - delete_volume_snapshotclass_vol_snapshot_class_specs.name is defined and delete_volume_snapshotclass_vol_snapshot_class_specs.name != ""
   tags:
     - k8s_delete_volume_snapshot_class
 # Note: VolumeSnapshotClass is a cluster-scoped resource, so we do not specify a namespace.

@@ -11,6 +11,59 @@
     - delete_pvcs_oc_api_token
     - delete_pvcs_pvc_namespace
 
+# Preflight: require at least one backend flag to be enabled, otherwise the
+# role would silently do nothing (the namespace would still be deleted though).
+- name: Verify at least one backend flag is enabled
+  ansible.builtin.fail:
+    msg: >-
+      At least one of delete_pvcs_configure_nfs,
+      delete_pvcs_configure_nfs_flexgroup,
+      delete_pvcs_configure_iscsi,
+      delete_pvcs_configure_nvme_tcp, or
+      delete_pvcs_configure_fcp must be set to true.
+  when:
+    - not (delete_pvcs_configure_nfs | default(false) | bool)
+    - not (delete_pvcs_configure_nfs_flexgroup | default(false) | bool)
+    - not (delete_pvcs_configure_iscsi | default(false) | bool)
+    - not (delete_pvcs_configure_nvme_tcp | default(false) | bool)
+    - not (delete_pvcs_configure_fcp | default(false) | bool)
+
+# Preflight: per-backend spec must be defined and non-empty when its flag is enabled.
+- name: Verify delete_pvcs_nfs_specs is set when NFS is enabled
+  ansible.builtin.fail:
+    msg: "delete_pvcs_nfs_specs is not defined or empty while delete_pvcs_configure_nfs is true"
+  when:
+    - delete_pvcs_configure_nfs | default(false) | bool
+    - delete_pvcs_nfs_specs is not defined or (delete_pvcs_nfs_specs | length == 0)
+
+- name: Verify delete_pvcs_nfs_flexgroup_specs is set when NFS FlexGroup is enabled
+  ansible.builtin.fail:
+    msg: "delete_pvcs_nfs_flexgroup_specs is not defined or empty while delete_pvcs_configure_nfs_flexgroup is true"
+  when:
+    - delete_pvcs_configure_nfs_flexgroup | default(false) | bool
+    - delete_pvcs_nfs_flexgroup_specs is not defined or (delete_pvcs_nfs_flexgroup_specs | length == 0)
+
+- name: Verify delete_pvcs_iscsi_specs is set when iSCSI is enabled
+  ansible.builtin.fail:
+    msg: "delete_pvcs_iscsi_specs is not defined or empty while delete_pvcs_configure_iscsi is true"
+  when:
+    - delete_pvcs_configure_iscsi | default(false) | bool
+    - delete_pvcs_iscsi_specs is not defined or (delete_pvcs_iscsi_specs | length == 0)
+
+- name: Verify delete_pvcs_nvme_tcp_specs is set when NVMe/TCP is enabled
+  ansible.builtin.fail:
+    msg: "delete_pvcs_nvme_tcp_specs is not defined or empty while delete_pvcs_configure_nvme_tcp is true"
+  when:
+    - delete_pvcs_configure_nvme_tcp | default(false) | bool
+    - delete_pvcs_nvme_tcp_specs is not defined or (delete_pvcs_nvme_tcp_specs | length == 0)
+
+- name: Verify delete_pvcs_fcp_specs is set when FCP is enabled
+  ansible.builtin.fail:
+    msg: "delete_pvcs_fcp_specs is not defined or empty while delete_pvcs_configure_fcp is true"
+  when:
+    - delete_pvcs_configure_fcp | default(false) | bool
+    - delete_pvcs_fcp_specs is not defined or (delete_pvcs_fcp_specs | length == 0)
+
 # Define a YAML anchor for OpenShift/Kubernetes API login info.
 # Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
 # across every k8s task.
@@ -31,8 +84,7 @@
     name: "{{ item.pvc_name }}"
   loop: "{{ delete_pvcs_nfs_specs.pvc_info | default([]) }}"
   when:
-    - delete_pvcs_configure_nfs == true
-    - delete_pvcs_pvc_namespace is defined and delete_pvcs_pvc_namespace != ""
+    - delete_pvcs_configure_nfs | bool
     - item.pvc_name is defined and item.pvc_name != ""
   tags:
     - k8s_delete_nfs_pvcs
@@ -48,8 +100,7 @@
     name: "{{ item.pvc_name }}"
   loop: "{{ delete_pvcs_nfs_flexgroup_specs.pvc_info | default([]) }}"
   when:
-    - delete_pvcs_configure_nfs_flexgroup == true
-    - delete_pvcs_pvc_namespace is defined and delete_pvcs_pvc_namespace != ""
+    - delete_pvcs_configure_nfs_flexgroup | bool
     - item.pvc_name is defined and item.pvc_name != ""
   tags:
     - k8s_delete_nfs_flexgroup_pvcs
@@ -64,8 +115,7 @@
     name: "{{ item.pvc_name }}"
   loop: "{{ delete_pvcs_iscsi_specs.pvc_info | default([]) }}"
   when:
-    - delete_pvcs_configure_iscsi == true
-    - delete_pvcs_pvc_namespace is defined and delete_pvcs_pvc_namespace != ""
+    - delete_pvcs_configure_iscsi | bool
     - item.pvc_name is defined and item.pvc_name != ""
   tags:
     - k8s_delete_iscsi_pvcs
@@ -80,8 +130,7 @@
     name: "{{ item.pvc_name }}"
   loop: "{{ delete_pvcs_nvme_tcp_specs.pvc_info | default([]) }}"
   when:
-    - delete_pvcs_configure_nvme_tcp == true
-    - delete_pvcs_pvc_namespace is defined and delete_pvcs_pvc_namespace != ""
+    - delete_pvcs_configure_nvme_tcp | bool
     - item.pvc_name is defined and item.pvc_name != ""
   tags:
     - k8s_delete_nvme_tcp_pvcs
@@ -96,8 +145,7 @@
     name: "{{ item.pvc_name }}"
   loop: "{{ delete_pvcs_fcp_specs.pvc_info | default([]) }}"
   when:
-    - delete_pvcs_configure_fcp == true
-    - delete_pvcs_pvc_namespace is defined and delete_pvcs_pvc_namespace != ""
+    - delete_pvcs_configure_fcp | bool
     - item.pvc_name is defined and item.pvc_name != ""
   tags:
     - k8s_delete_fcp_pvcs
@@ -108,7 +156,6 @@
     <<: *k8s_auth
     state: absent
     kind: Namespace
-    name: "{{ delete_pvcs_pvc_namespace | default('') }}"
-  when: delete_pvcs_pvc_namespace is defined and delete_pvcs_pvc_namespace != ""
+    name: "{{ delete_pvcs_pvc_namespace }}"
   tags:
     - k8s_delete_namespace

@@ -32,7 +32,6 @@
     name: "{{ item.snapshot_name }}"
   loop: "{{ delete_volume_snapshots_volume_snapshot_specs | default([]) }}"
   when:
-    - delete_volume_snapshots_pvc_namespace is defined and delete_volume_snapshots_pvc_namespace != ""
     - item.snapshot_name is defined and item.snapshot_name != ""
   tags:
     - k8s_delete_volume_snapshots
