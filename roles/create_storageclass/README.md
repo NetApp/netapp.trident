@@ -23,20 +23,20 @@ The `create_storageclass` role is part of the **NetApp Trident Validated Content
 
 ## Role Variables
 
-| Variable                                    | Description                                                         | Default                                |
-|---------------------------------------------|---------------------------------------------------------------------|----------------------------------------|
-| `oc_api_url`                                | OpenShift/Kubernetes API URL.                                       |                                        |
-| `oc_api_token`                              | OpenShift/Kubernetes API token.                                     |                                        |
-| `configure_nfs`                             | Whether to create the NFS StorageClass.                             | **Required** (no default)              |
-| `configure_nfs_flexgroup`                   | Whether to create the NFS FlexGroup StorageClass.                   | **Required** (no default)                         |
-| `configure_iscsi`                           | Whether to create the iSCSI StorageClass.                           | **Required** (no default)                 |
-| `configure_fcp`                             | Whether to create the FCP StorageClass.                             | **Required** (no default)              |
-| `configure_nvme_tcp`                        | Whether to create the NVMe/TCP StorageClass.                        | **Required** (no default)              |
+| Variable                                    | Description                                                         | Default                                                  |
+|---------------------------------------------|---------------------------------------------------------------------|----------------------------------------                  |
+| `oc_api_url`                                | OpenShift/Kubernetes API URL.                                       |                                                          |
+| `oc_api_token`                              | OpenShift/Kubernetes API token.                                     |                                                          |
+| `configure_nfs`                             | Whether to create the NFS StorageClass.                             | **Required** (no default)                                |
+| `configure_nfs_flexgroup`                   | Whether to create the NFS FlexGroup StorageClass.                   | **Required** (no default)                                |
+| `configure_iscsi`                           | Whether to create the iSCSI StorageClass.                           | **Required** (no default)                                |
+| `configure_fcp`                             | Whether to create the FCP StorageClass.                             | **Required** (no default)                                |
+| `configure_nvme_tcp`                        | Whether to create the NVMe/TCP StorageClass.                        | **Required** (no default)                                |
 | `nfs_specs`                                 | NFS StorageClass spec (`sc_name`, `sc_reclaim_policy`, `sc_volume_binding_mode`, `nfs_version`). | See defaults                |
-| `nfs_flexgroup_specs`                       | NFS FlexGroup StorageClass spec.                                    | See defaults                           |
-| `iscsi_specs`                               | iSCSI StorageClass spec.                                            | See defaults                           |
-| `nvme_tcp_specs`                            | NVMe/TCP StorageClass spec.                                         | See defaults                           |
-| `fcp_specs`                                 | FCP StorageClass spec.                                              | See defaults                           |
+| `nfs_flexgroup_specs`                       | NFS FlexGroup StorageClass spec.                                    | See defaults                                             |
+| `iscsi_specs`                               | iSCSI StorageClass spec.                                            | See defaults                                             |
+| `nvme_tcp_specs`                            | NVMe/TCP StorageClass spec.                                         | See defaults                                             |
+| `fcp_specs`                                 | FCP StorageClass spec.                                              | See defaults                                             |
 
 ## Example Playbook
 
