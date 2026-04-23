@@ -26,7 +26,7 @@
     k8s_auth: &k8s_auth
       host: "{{ delete_volume_snapshotclass_oc_api_url }}"
       api_key: "{{ delete_volume_snapshotclass_oc_api_token }}"
-      validate_certs: false
+      validate_certs: "{{ delete_volume_snapshotclass_validate_certs | default(false) }}"
 
 # Delete VolumeSnapshotClass (cluster-scoped resource)
 - name: Delete VolumeSnapshotClass {{ delete_volume_snapshotclass_vol_snapshot_class_specs.name | default('') }}

@@ -24,6 +24,7 @@ The `set_default_storageclass` role is part of the **NetApp Trident Validated Co
 |----------|-------------|---------|
 | `set_default_storageclass_oc_api_url` | OpenShift/Kubernetes API server URL. | **Required** (no default) |
 | `set_default_storageclass_oc_api_token` | OpenShift/Kubernetes bearer token used to authenticate against the API. | **Required** (no default) |
+| `set_default_storageclass_validate_certs` | Whether to validate the TLS certificate of the Kubernetes API server. Set to `true` in production when a trusted CA is configured. | `false` |
 | `set_default_storageclass_default_sc` | Name of the StorageClass to mark as the cluster-wide default. Must match an existing StorageClass. | **Required** (no default) |
 | `set_default_storageclass_configure_nfs` | Set to `true` if the NFS StorageClass is in scope for the default-class selection. | `false` |
 | `set_default_storageclass_configure_nfs_flexgroup` | Set to `true` if the NFS FlexGroup StorageClass is in scope for the default-class selection. | `false` |

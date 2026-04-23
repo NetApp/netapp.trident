@@ -108,7 +108,7 @@
     k8s_auth: &k8s_auth
       host: "{{ create_pvcs_oc_api_url }}"
       api_key: "{{ create_pvcs_oc_api_token }}"
-      validate_certs: false
+      validate_certs: "{{ create_pvcs_validate_certs | default(false) }}"
 
 # Create a new project/namespace for creating PVCs
 - name: Create a new project/namespace for creating PVCs

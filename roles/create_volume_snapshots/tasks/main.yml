@@ -28,7 +28,7 @@
     k8s_auth: &k8s_auth
       host: "{{ create_volume_snapshots_oc_api_url }}"
       api_key: "{{ create_volume_snapshots_oc_api_token }}"
-      validate_certs: false
+      validate_certs: "{{ create_volume_snapshots_validate_certs | default(false) }}"
 
 # Get all PVCs in the namespace to validate before creating snapshots
 - name: Get all PVCs in the {{ create_volume_snapshots_pvc_namespace | default('') }} namespace

@@ -107,7 +107,7 @@
     k8s_auth: &k8s_auth
       host: "{{ delete_storageclass_oc_api_url }}"
       api_key: "{{ delete_storageclass_oc_api_token }}"
-      validate_certs: false
+      validate_certs: "{{ delete_storageclass_validate_certs | default(false) }}"
 
 # Delete NFS StorageClass
 - name: Delete NFS StorageClass {{ delete_storageclass_nfs_specs.sc_name | default('') }}

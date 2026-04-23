@@ -26,6 +26,7 @@ The `create_pvcs` role is part of the **NetApp Trident Validated Content Collect
 |----------|-------------|---------|
 | `create_pvcs_oc_api_url` | OpenShift/Kubernetes API server URL (for example, `https://api.cluster.example.com:6443`). | **Required** (no default) |
 | `create_pvcs_oc_api_token` | OpenShift/Kubernetes bearer token used to authenticate against the API. | **Required** (no default) |
+| `create_pvcs_validate_certs` | Whether to validate the TLS certificate of the Kubernetes API server. Set to `true` in production when a trusted CA is configured. | `false` |
 | `create_pvcs_pvc_namespace` | Namespace in which to create the PVCs. Created by the role if it does not already exist. | **Required** (no default) |
 | `create_pvcs_configure_nfs` | Set to `true` to create NFS PVCs from `create_pvcs_nfs_specs`. | `false` |
 | `create_pvcs_configure_nfs_flexgroup` | Set to `true` to create NFS FlexGroup PVCs from `create_pvcs_nfs_flexgroup_specs`. | `false` |

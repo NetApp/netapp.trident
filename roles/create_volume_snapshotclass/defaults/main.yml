@@ -1,2 +1,4 @@
 ---
 # defaults file for create_volume_snapshotclass
+
+create_volume_snapshotclass_validate_certs: false

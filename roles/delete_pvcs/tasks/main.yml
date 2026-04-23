@@ -72,7 +72,7 @@
     k8s_auth: &k8s_auth
       host: "{{ delete_pvcs_oc_api_url }}"
       api_key: "{{ delete_pvcs_oc_api_token }}"
-      validate_certs: false
+      validate_certs: "{{ delete_pvcs_validate_certs | default(false) }}"
 
 # Delete PVCs with NFS storage class from the specified namespace
 - name: Delete NFS PVCs from {{ delete_pvcs_pvc_namespace | default('') }} namespace

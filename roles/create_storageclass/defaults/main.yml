@@ -6,3 +6,4 @@ create_storageclass_configure_nfs_flexgroup: false
 create_storageclass_configure_iscsi: false
 create_storageclass_configure_fcp: false
 create_storageclass_configure_nvme_tcp: false
+create_storageclass_validate_certs: false

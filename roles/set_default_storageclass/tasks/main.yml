@@ -36,7 +36,7 @@
     k8s_auth: &k8s_auth
       host: "{{ set_default_storageclass_oc_api_url }}"
       api_key: "{{ set_default_storageclass_oc_api_token }}"
-      validate_certs: false
+      validate_certs: "{{ set_default_storageclass_validate_certs | default(false) }}"
 
 # Get all existing storage classes to check for current default
 - name: Get all existing storage classes

@@ -22,6 +22,7 @@ The `delete_pvcs` role is part of the **NetApp Trident Validated Content Collect
 |----------|-------------|---------|
 | `delete_pvcs_oc_api_url` | OpenShift/Kubernetes API server URL. | **Required** (no default) |
 | `delete_pvcs_oc_api_token` | OpenShift/Kubernetes bearer token used to authenticate against the API. | **Required** (no default) |
+| `delete_pvcs_validate_certs` | Whether to validate the TLS certificate of the Kubernetes API server. Set to `true` in production when a trusted CA is configured. | `false` |
 | `delete_pvcs_pvc_namespace` | Namespace whose PVCs will be removed; the namespace itself is also deleted at the end of the run. | **Required** (no default) |
 | `delete_pvcs_configure_nfs` | Set to `true` to delete the NFS PVCs listed in `delete_pvcs_nfs_specs`. | `false` |
 | `delete_pvcs_configure_nfs_flexgroup` | Set to `true` to delete the NFS FlexGroup PVCs listed in `delete_pvcs_nfs_flexgroup_specs`. | `false` |

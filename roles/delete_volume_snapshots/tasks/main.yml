@@ -20,7 +20,7 @@
     k8s_auth: &k8s_auth
       host: "{{ delete_volume_snapshots_oc_api_url }}"
       api_key: "{{ delete_volume_snapshots_oc_api_token }}"
-      validate_certs: false
+      validate_certs: "{{ delete_volume_snapshots_validate_certs | default(false) }}"
 
 # Delete VolumeSnapshots of the specified PVCs from the given namespace
 - name: Delete VolumeSnapshots of the specified PVCs from {{ delete_volume_snapshots_pvc_namespace | default('') }} namespace

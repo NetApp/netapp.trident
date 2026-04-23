@@ -24,6 +24,7 @@ The `create_volume_snapshotclass` role is part of the **NetApp Trident Validated
 |----------|-------------|---------|
 | `create_volume_snapshotclass_oc_api_url` | OpenShift/Kubernetes API server URL. | **Required** (no default) |
 | `create_volume_snapshotclass_oc_api_token` | OpenShift/Kubernetes bearer token used to authenticate against the API. | **Required** (no default) |
+| `create_volume_snapshotclass_validate_certs` | Whether to validate the TLS certificate of the Kubernetes API server. Set to `true` in production when a trusted CA is configured. | `false` |
 | `create_volume_snapshotclass_vol_snapshot_class_specs` | Dict describing the `VolumeSnapshotClass` to create (see nested keys below). | **Required** (no default) |
 
 Nested keys of `create_volume_snapshotclass_vol_snapshot_class_specs`:

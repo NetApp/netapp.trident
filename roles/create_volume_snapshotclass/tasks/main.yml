@@ -26,7 +26,7 @@
     k8s_auth: &k8s_auth
       host: "{{ create_volume_snapshotclass_oc_api_url }}"
       api_key: "{{ create_volume_snapshotclass_oc_api_token }}"
-      validate_certs: false
+      validate_certs: "{{ create_volume_snapshotclass_validate_certs | default(false) }}"
 
 # Create VolumeSnapshotClass for snapshot operations
 - name: Create VolumeSnapshotClass for snapshot operations

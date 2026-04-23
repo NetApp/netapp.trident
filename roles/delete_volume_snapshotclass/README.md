@@ -21,6 +21,7 @@ The `delete_volume_snapshotclass` role is part of the **NetApp Trident Validated
 |----------|-------------|---------|
 | `delete_volume_snapshotclass_oc_api_url` | OpenShift/Kubernetes API server URL. | **Required** (no default) |
 | `delete_volume_snapshotclass_oc_api_token` | OpenShift/Kubernetes bearer token used to authenticate against the API. | **Required** (no default) |
+| `delete_volume_snapshotclass_validate_certs` | Whether to validate the TLS certificate of the Kubernetes API server. Set to `true` in production when a trusted CA is configured. | `false` |
 | `delete_volume_snapshotclass_vol_snapshot_class_specs` | Dict identifying the `VolumeSnapshotClass` to delete. | **Required** (no default) |
 
 Nested key of `delete_volume_snapshotclass_vol_snapshot_class_specs`:

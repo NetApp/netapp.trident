@@ -29,6 +29,7 @@ The `create_storageclass` role is part of the **NetApp Trident Validated Content
 |----------|-------------|---------|
 | `create_storageclass_oc_api_url` | OpenShift/Kubernetes API server URL. | **Required** (no default) |
 | `create_storageclass_oc_api_token` | OpenShift/Kubernetes bearer token used to authenticate against the API. | **Required** (no default) |
+| `create_storageclass_validate_certs` | Whether to validate the TLS certificate of the Kubernetes API server. Set to `true` in production when a trusted CA is configured. | `false` |
 | `create_storageclass_configure_nfs` | Set to `true` to create the NFS StorageClass. | `false` |
 | `create_storageclass_configure_nfs_flexgroup` | Set to `true` to create the NFS FlexGroup StorageClass. | `false` |
 | `create_storageclass_configure_iscsi` | Set to `true` to create the iSCSI StorageClass. | `false` |
