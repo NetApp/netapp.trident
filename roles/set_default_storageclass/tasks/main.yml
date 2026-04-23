@@ -1,18 +1,22 @@
 ---
 # Set the default Kubernetes StorageClass.
 
-# Preflight: verify required variables are defined and not empty.
 - name: Verify required variables are defined and not empty
   ansible.builtin.fail:
-    msg: "Required variable '{{ item }}' is not defined or empty"
-  when: "vars[item] is not defined or (vars[item] | length == 0)"
+    msg: "{{ item }} is not defined or empty"
+  when: "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
   loop:
     - set_default_storageclass_oc_api_url
     - set_default_storageclass_oc_api_token
     - set_default_storageclass_default_sc
 
-# Preflight: require at least one backend flag to be enabled, otherwise the
-# role would silently do nothing.
+- name: Define anchor for OpenShift/Kubernetes API login info
+  ansible.builtin.set_fact:
+    k8s_auth: &k8s_auth
+      host: "{{ set_default_storageclass_oc_api_url | default(omit) }}"
+      api_key: "{{ set_default_storageclass_oc_api_token | default(omit) }}"
+      validate_certs: "{{ set_default_storageclass_validate_certs | default(false) }}"
+
 - name: Verify at least one backend flag is enabled
   ansible.builtin.fail:
     msg: >-
@@ -27,16 +31,6 @@
     - not (set_default_storageclass_configure_iscsi | default(false) | bool)
     - not (set_default_storageclass_configure_nvme_tcp | default(false) | bool)
     - not (set_default_storageclass_configure_fcp | default(false) | bool)
-
-# Define a YAML anchor for OpenShift/Kubernetes API login info.
-# Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
-# across every k8s task.
-- name: Define anchor for OpenShift/Kubernetes API login info
-  ansible.builtin.set_fact:
-    k8s_auth: &k8s_auth
-      host: "{{ set_default_storageclass_oc_api_url }}"
-      api_key: "{{ set_default_storageclass_oc_api_token }}"
-      validate_certs: "{{ set_default_storageclass_validate_certs | default(false) }}"
 
 # Get all existing storage classes to check for current default
 - name: Get all existing storage classes

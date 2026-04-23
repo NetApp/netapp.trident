@@ -1,17 +1,21 @@
 ---
 # Create Kubernetes StorageClasses using NetApp Trident as the provisioner.
 
-# Preflight: verify required variables are defined and not empty.
 - name: Verify required variables are defined and not empty
   ansible.builtin.fail:
-    msg: "Required variable '{{ item }}' is not defined or empty"
-  when: "vars[item] is not defined or (vars[item] | length == 0)"
+    msg: "{{ item }} is not defined or empty"
+  when: "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
   loop:
     - create_storageclass_oc_api_url
     - create_storageclass_oc_api_token
 
-# Preflight: require at least one backend flag to be enabled, otherwise the
-# role would silently do nothing.
+- name: Define anchor for OpenShift/Kubernetes API login info
+  ansible.builtin.set_fact:
+    k8s_auth: &k8s_auth
+      host: "{{ create_storageclass_oc_api_url | default(omit) }}"
+      api_key: "{{ create_storageclass_oc_api_token | default(omit) }}"
+      validate_certs: "{{ create_storageclass_validate_certs | default(false) }}"
+
 - name: Verify at least one backend flag is enabled
   ansible.builtin.fail:
     msg: >-
@@ -27,104 +31,102 @@
     - not (create_storageclass_configure_nvme_tcp | default(false) | bool)
     - not (create_storageclass_configure_fcp | default(false) | bool)
 
-# Preflight: per-backend spec must be defined and non-empty when its flag is enabled.
-- name: Verify create_storageclass_nfs_specs is set when NFS is enabled
+- name: Verify NFS backend variables are defined and not empty when NFS is enabled
   ansible.builtin.fail:
-    msg: "create_storageclass_nfs_specs is not defined or empty while create_storageclass_configure_nfs is true"
+    msg: "{{ item }} is not defined or empty"
   when:
     - create_storageclass_configure_nfs | default(false) | bool
-    - create_storageclass_nfs_specs is not defined or (create_storageclass_nfs_specs | length == 0)
+    - "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
+  loop:
+    - create_storageclass_nfs_specs
 
-- name: Verify create_storageclass_nfs_flexgroup_specs is set when NFS FlexGroup is enabled
-  ansible.builtin.fail:
-    msg: "create_storageclass_nfs_flexgroup_specs is not defined or empty while create_storageclass_configure_nfs_flexgroup is true"
-  when:
-    - create_storageclass_configure_nfs_flexgroup | default(false) | bool
-    - create_storageclass_nfs_flexgroup_specs is not defined or (create_storageclass_nfs_flexgroup_specs | length == 0)
-
-- name: Verify create_storageclass_iscsi_specs is set when iSCSI is enabled
-  ansible.builtin.fail:
-    msg: "create_storageclass_iscsi_specs is not defined or empty while create_storageclass_configure_iscsi is true"
-  when:
-    - create_storageclass_configure_iscsi | default(false) | bool
-    - create_storageclass_iscsi_specs is not defined or (create_storageclass_iscsi_specs | length == 0)
-
-- name: Verify create_storageclass_nvme_tcp_specs is set when NVMe/TCP is enabled
-  ansible.builtin.fail:
-    msg: "create_storageclass_nvme_tcp_specs is not defined or empty while create_storageclass_configure_nvme_tcp is true"
-  when:
-    - create_storageclass_configure_nvme_tcp | default(false) | bool
-    - create_storageclass_nvme_tcp_specs is not defined or (create_storageclass_nvme_tcp_specs | length == 0)
-
-- name: Verify create_storageclass_fcp_specs is set when FCP is enabled
-  ansible.builtin.fail:
-    msg: "create_storageclass_fcp_specs is not defined or empty while create_storageclass_configure_fcp is true"
-  when:
-    - create_storageclass_configure_fcp | default(false) | bool
-    - create_storageclass_fcp_specs is not defined or (create_storageclass_fcp_specs | length == 0)
-
-# Preflight: per-backend required nested fields must be present when its flag is enabled.
-- name: Verify required fields in create_storageclass_nfs_specs
+- name: Verify required fields in create_storageclass_nfs_specs when NFS is enabled
   ansible.builtin.fail:
     msg: "create_storageclass_nfs_specs.{{ item }} is not defined or empty"
   when:
     - create_storageclass_configure_nfs | default(false) | bool
-    - create_storageclass_nfs_specs[item] is not defined or (create_storageclass_nfs_specs[item] | length == 0)
+    - create_storageclass_nfs_specs[item] is not defined or (create_storageclass_nfs_specs[item] | default('') | string | length == 0)
   loop:
     - sc_name
     - sc_volume_binding_mode
     - nfs_version
 
-- name: Verify required fields in create_storageclass_nfs_flexgroup_specs
+- name: Verify NFS FlexGroup backend variables are defined and not empty when NFS FlexGroup is enabled
+  ansible.builtin.fail:
+    msg: "{{ item }} is not defined or empty"
+  when:
+    - create_storageclass_configure_nfs_flexgroup | default(false) | bool
+    - "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
+  loop:
+    - create_storageclass_nfs_flexgroup_specs
+
+- name: Verify required fields in create_storageclass_nfs_flexgroup_specs when NFS FlexGroup is enabled
   ansible.builtin.fail:
     msg: "create_storageclass_nfs_flexgroup_specs.{{ item }} is not defined or empty"
   when:
     - create_storageclass_configure_nfs_flexgroup | default(false) | bool
-    - create_storageclass_nfs_flexgroup_specs[item] is not defined or (create_storageclass_nfs_flexgroup_specs[item] | length == 0)
+    - create_storageclass_nfs_flexgroup_specs[item] is not defined or (create_storageclass_nfs_flexgroup_specs[item] | default('') | string | length == 0)
   loop:
     - sc_name
     - sc_volume_binding_mode
     - nfs_version
 
-- name: Verify required fields in create_storageclass_iscsi_specs
+- name: Verify iSCSI backend variables are defined and not empty when iSCSI is enabled
+  ansible.builtin.fail:
+    msg: "{{ item }} is not defined or empty"
+  when:
+    - create_storageclass_configure_iscsi | default(false) | bool
+    - "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
+  loop:
+    - create_storageclass_iscsi_specs
+
+- name: Verify required fields in create_storageclass_iscsi_specs when iSCSI is enabled
   ansible.builtin.fail:
     msg: "create_storageclass_iscsi_specs.{{ item }} is not defined or empty"
   when:
     - create_storageclass_configure_iscsi | default(false) | bool
-    - create_storageclass_iscsi_specs[item] is not defined or (create_storageclass_iscsi_specs[item] | length == 0)
+    - create_storageclass_iscsi_specs[item] is not defined or (create_storageclass_iscsi_specs[item] | default('') | string | length == 0)
   loop:
     - sc_name
     - sc_volume_binding_mode
 
-- name: Verify required fields in create_storageclass_nvme_tcp_specs
+- name: Verify NVMe/TCP backend variables are defined and not empty when NVMe/TCP is enabled
+  ansible.builtin.fail:
+    msg: "{{ item }} is not defined or empty"
+  when:
+    - create_storageclass_configure_nvme_tcp | default(false) | bool
+    - "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
+  loop:
+    - create_storageclass_nvme_tcp_specs
+
+- name: Verify required fields in create_storageclass_nvme_tcp_specs when NVMe/TCP is enabled
   ansible.builtin.fail:
     msg: "create_storageclass_nvme_tcp_specs.{{ item }} is not defined or empty"
   when:
     - create_storageclass_configure_nvme_tcp | default(false) | bool
-    - create_storageclass_nvme_tcp_specs[item] is not defined or (create_storageclass_nvme_tcp_specs[item] | length == 0)
+    - create_storageclass_nvme_tcp_specs[item] is not defined or (create_storageclass_nvme_tcp_specs[item] | default('') | string | length == 0)
   loop:
     - sc_name
     - sc_volume_binding_mode
 
-- name: Verify required fields in create_storageclass_fcp_specs
+- name: Verify FCP backend variables are defined and not empty when FCP is enabled
+  ansible.builtin.fail:
+    msg: "{{ item }} is not defined or empty"
+  when:
+    - create_storageclass_configure_fcp | default(false) | bool
+    - "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
+  loop:
+    - create_storageclass_fcp_specs
+
+- name: Verify required fields in create_storageclass_fcp_specs when FCP is enabled
   ansible.builtin.fail:
     msg: "create_storageclass_fcp_specs.{{ item }} is not defined or empty"
   when:
     - create_storageclass_configure_fcp | default(false) | bool
-    - create_storageclass_fcp_specs[item] is not defined or (create_storageclass_fcp_specs[item] | length == 0)
+    - create_storageclass_fcp_specs[item] is not defined or (create_storageclass_fcp_specs[item] | default('') | string | length == 0)
   loop:
     - sc_name
     - sc_volume_binding_mode
-
-# Define a YAML anchor for OpenShift/Kubernetes API login info.
-# Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
-# across every k8s task.
-- name: Define anchor for OpenShift/Kubernetes API login info
-  ansible.builtin.set_fact:
-    k8s_auth: &k8s_auth
-      host: "{{ create_storageclass_oc_api_url }}"
-      api_key: "{{ create_storageclass_oc_api_token }}"
-      validate_certs: "{{ create_storageclass_validate_certs | default(false) }}"
 
 # Create NFS storage class with specified volume binding mode
 - name: Create NFS storage class with volume binding mode {{ create_storageclass_nfs_specs.sc_volume_binding_mode | default('') }}

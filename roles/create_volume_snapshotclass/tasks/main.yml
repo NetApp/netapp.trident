@@ -1,32 +1,30 @@
 ---
 # Create a VolumeSnapshotClass for NetApp Trident snapshot operations.
 
-# Preflight: verify required variables are defined and not empty.
 - name: Verify required variables are defined and not empty
   ansible.builtin.fail:
-    msg: "Required variable '{{ item }}' is not defined or empty"
-  when: "vars[item] is not defined or (vars[item] | length == 0)"
+    msg: "{{ item }} is not defined or empty"
+  when: "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
   loop:
     - create_volume_snapshotclass_oc_api_url
     - create_volume_snapshotclass_oc_api_token
     - create_volume_snapshotclass_vol_snapshot_class_specs
 
-# Preflight: required nested fields in the spec.
-- name: Verify create_volume_snapshotclass_vol_snapshot_class_specs.name is set
-  ansible.builtin.fail:
-    msg: "create_volume_snapshotclass_vol_snapshot_class_specs.name is not defined or empty"
-  when:
-    - create_volume_snapshotclass_vol_snapshot_class_specs.name is not defined or (create_volume_snapshotclass_vol_snapshot_class_specs.name | length == 0)
-
-# Define a YAML anchor for OpenShift/Kubernetes API login info.
-# Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
-# across every k8s task.
 - name: Define anchor for OpenShift/Kubernetes API login info
   ansible.builtin.set_fact:
     k8s_auth: &k8s_auth
-      host: "{{ create_volume_snapshotclass_oc_api_url }}"
-      api_key: "{{ create_volume_snapshotclass_oc_api_token }}"
+      host: "{{ create_volume_snapshotclass_oc_api_url | default(omit) }}"
+      api_key: "{{ create_volume_snapshotclass_oc_api_token | default(omit) }}"
       validate_certs: "{{ create_volume_snapshotclass_validate_certs | default(false) }}"
+
+- name: Verify required fields in create_volume_snapshotclass_vol_snapshot_class_specs
+  ansible.builtin.fail:
+    msg: "create_volume_snapshotclass_vol_snapshot_class_specs.{{ item }} is not defined or empty"
+  when:
+    - create_volume_snapshotclass_vol_snapshot_class_specs[item] is not defined
+      or (create_volume_snapshotclass_vol_snapshot_class_specs[item] | default('') | string | length == 0)
+  loop:
+    - name
 
 # Create VolumeSnapshotClass for snapshot operations
 - name: Create VolumeSnapshotClass for snapshot operations

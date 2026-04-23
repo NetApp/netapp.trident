@@ -1,18 +1,22 @@
 ---
 # Delete PersistentVolumeClaims (PVCs) from the specified namespace and remove the namespace.
 
-# Preflight: verify required variables are defined and not empty.
 - name: Verify required variables are defined and not empty
   ansible.builtin.fail:
-    msg: "Required variable '{{ item }}' is not defined or empty"
-  when: "vars[item] is not defined or (vars[item] | length == 0)"
+    msg: "{{ item }} is not defined or empty"
+  when: "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
   loop:
     - delete_pvcs_oc_api_url
     - delete_pvcs_oc_api_token
     - delete_pvcs_pvc_namespace
 
-# Preflight: require at least one backend flag to be enabled, otherwise the
-# role would silently do nothing (the namespace would still be deleted though).
+- name: Define anchor for OpenShift/Kubernetes API login info
+  ansible.builtin.set_fact:
+    k8s_auth: &k8s_auth
+      host: "{{ delete_pvcs_oc_api_url | default(omit) }}"
+      api_key: "{{ delete_pvcs_oc_api_token | default(omit) }}"
+      validate_certs: "{{ delete_pvcs_validate_certs | default(false) }}"
+
 - name: Verify at least one backend flag is enabled
   ansible.builtin.fail:
     msg: >-
@@ -28,51 +32,100 @@
     - not (delete_pvcs_configure_nvme_tcp | default(false) | bool)
     - not (delete_pvcs_configure_fcp | default(false) | bool)
 
-# Preflight: per-backend spec must be defined and non-empty when its flag is enabled.
-- name: Verify delete_pvcs_nfs_specs is set when NFS is enabled
+- name: Verify NFS backend variables are defined and not empty when NFS is enabled
   ansible.builtin.fail:
-    msg: "delete_pvcs_nfs_specs is not defined or empty while delete_pvcs_configure_nfs is true"
+    msg: "{{ item }} is not defined or empty"
   when:
     - delete_pvcs_configure_nfs | default(false) | bool
-    - delete_pvcs_nfs_specs is not defined or (delete_pvcs_nfs_specs | length == 0)
+    - "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
+  loop:
+    - delete_pvcs_nfs_specs
 
-- name: Verify delete_pvcs_nfs_flexgroup_specs is set when NFS FlexGroup is enabled
+- name: Verify NFS FlexGroup backend variables are defined and not empty when NFS FlexGroup is enabled
   ansible.builtin.fail:
-    msg: "delete_pvcs_nfs_flexgroup_specs is not defined or empty while delete_pvcs_configure_nfs_flexgroup is true"
+    msg: "{{ item }} is not defined or empty"
   when:
     - delete_pvcs_configure_nfs_flexgroup | default(false) | bool
-    - delete_pvcs_nfs_flexgroup_specs is not defined or (delete_pvcs_nfs_flexgroup_specs | length == 0)
+    - "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
+  loop:
+    - delete_pvcs_nfs_flexgroup_specs
 
-- name: Verify delete_pvcs_iscsi_specs is set when iSCSI is enabled
+- name: Verify iSCSI backend variables are defined and not empty when iSCSI is enabled
   ansible.builtin.fail:
-    msg: "delete_pvcs_iscsi_specs is not defined or empty while delete_pvcs_configure_iscsi is true"
+    msg: "{{ item }} is not defined or empty"
   when:
     - delete_pvcs_configure_iscsi | default(false) | bool
-    - delete_pvcs_iscsi_specs is not defined or (delete_pvcs_iscsi_specs | length == 0)
+    - "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
+  loop:
+    - delete_pvcs_iscsi_specs
 
-- name: Verify delete_pvcs_nvme_tcp_specs is set when NVMe/TCP is enabled
+- name: Verify NVMe/TCP backend variables are defined and not empty when NVMe/TCP is enabled
   ansible.builtin.fail:
-    msg: "delete_pvcs_nvme_tcp_specs is not defined or empty while delete_pvcs_configure_nvme_tcp is true"
+    msg: "{{ item }} is not defined or empty"
   when:
     - delete_pvcs_configure_nvme_tcp | default(false) | bool
-    - delete_pvcs_nvme_tcp_specs is not defined or (delete_pvcs_nvme_tcp_specs | length == 0)
+    - "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
+  loop:
+    - delete_pvcs_nvme_tcp_specs
 
-- name: Verify delete_pvcs_fcp_specs is set when FCP is enabled
+- name: Verify FCP backend variables are defined and not empty when FCP is enabled
   ansible.builtin.fail:
-    msg: "delete_pvcs_fcp_specs is not defined or empty while delete_pvcs_configure_fcp is true"
+    msg: "{{ item }} is not defined or empty"
   when:
     - delete_pvcs_configure_fcp | default(false) | bool
-    - delete_pvcs_fcp_specs is not defined or (delete_pvcs_fcp_specs | length == 0)
+    - "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
+  loop:
+    - delete_pvcs_fcp_specs
 
-# Define a YAML anchor for OpenShift/Kubernetes API login info.
-# Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
-# across every k8s task.
-- name: Define anchor for OpenShift/Kubernetes API login info
-  ansible.builtin.set_fact:
-    k8s_auth: &k8s_auth
-      host: "{{ delete_pvcs_oc_api_url }}"
-      api_key: "{{ delete_pvcs_oc_api_token }}"
-      validate_certs: "{{ delete_pvcs_validate_certs | default(false) }}"
+- name: Verify required fields in each delete_pvcs_nfs_specs.pvc_info entry when NFS is enabled
+  ansible.builtin.fail:
+    msg: "delete_pvcs_nfs_specs.pvc_info entry is missing required field '{{ item.1 }}': {{ item.0 }}"
+  when:
+    - delete_pvcs_configure_nfs | default(false) | bool
+    - item.0[item.1] is not defined or (item.0[item.1] | default('') | string | length == 0)
+  loop: "{{ delete_pvcs_nfs_specs.pvc_info | default([]) | product(['pvc_name']) | list }}"
+  loop_control:
+    label: "{{ item.0.pvc_name | default('<unnamed>') }}.{{ item.1 }}"
+
+- name: Verify required fields in each delete_pvcs_nfs_flexgroup_specs.pvc_info entry when NFS FlexGroup is enabled
+  ansible.builtin.fail:
+    msg: "delete_pvcs_nfs_flexgroup_specs.pvc_info entry is missing required field '{{ item.1 }}': {{ item.0 }}"
+  when:
+    - delete_pvcs_configure_nfs_flexgroup | default(false) | bool
+    - item.0[item.1] is not defined or (item.0[item.1] | default('') | string | length == 0)
+  loop: "{{ delete_pvcs_nfs_flexgroup_specs.pvc_info | default([]) | product(['pvc_name']) | list }}"
+  loop_control:
+    label: "{{ item.0.pvc_name | default('<unnamed>') }}.{{ item.1 }}"
+
+- name: Verify required fields in each delete_pvcs_iscsi_specs.pvc_info entry when iSCSI is enabled
+  ansible.builtin.fail:
+    msg: "delete_pvcs_iscsi_specs.pvc_info entry is missing required field '{{ item.1 }}': {{ item.0 }}"
+  when:
+    - delete_pvcs_configure_iscsi | default(false) | bool
+    - item.0[item.1] is not defined or (item.0[item.1] | default('') | string | length == 0)
+  loop: "{{ delete_pvcs_iscsi_specs.pvc_info | default([]) | product(['pvc_name']) | list }}"
+  loop_control:
+    label: "{{ item.0.pvc_name | default('<unnamed>') }}.{{ item.1 }}"
+
+- name: Verify required fields in each delete_pvcs_nvme_tcp_specs.pvc_info entry when NVMe/TCP is enabled
+  ansible.builtin.fail:
+    msg: "delete_pvcs_nvme_tcp_specs.pvc_info entry is missing required field '{{ item.1 }}': {{ item.0 }}"
+  when:
+    - delete_pvcs_configure_nvme_tcp | default(false) | bool
+    - item.0[item.1] is not defined or (item.0[item.1] | default('') | string | length == 0)
+  loop: "{{ delete_pvcs_nvme_tcp_specs.pvc_info | default([]) | product(['pvc_name']) | list }}"
+  loop_control:
+    label: "{{ item.0.pvc_name | default('<unnamed>') }}.{{ item.1 }}"
+
+- name: Verify required fields in each delete_pvcs_fcp_specs.pvc_info entry when FCP is enabled
+  ansible.builtin.fail:
+    msg: "delete_pvcs_fcp_specs.pvc_info entry is missing required field '{{ item.1 }}': {{ item.0 }}"
+  when:
+    - delete_pvcs_configure_fcp | default(false) | bool
+    - item.0[item.1] is not defined or (item.0[item.1] | default('') | string | length == 0)
+  loop: "{{ delete_pvcs_fcp_specs.pvc_info | default([]) | product(['pvc_name']) | list }}"
+  loop_control:
+    label: "{{ item.0.pvc_name | default('<unnamed>') }}.{{ item.1 }}"
 
 # Delete PVCs with NFS storage class from the specified namespace
 - name: Delete NFS PVCs from namespace {{ delete_pvcs_pvc_namespace | default('') }}

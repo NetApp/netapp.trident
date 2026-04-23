@@ -1,26 +1,31 @@
 ---
 # Delete VolumeSnapshots of the specified PVCs from the given namespace.
 
-# Preflight: verify required variables are defined and not empty.
 - name: Verify required variables are defined and not empty
   ansible.builtin.fail:
-    msg: "Required variable '{{ item }}' is not defined or empty"
-  when: "vars[item] is not defined or (vars[item] | length == 0)"
+    msg: "{{ item }} is not defined or empty"
+  when: "vars[item] is not defined or (vars[item] | default('') | string | length == 0)"
   loop:
     - delete_volume_snapshots_oc_api_url
     - delete_volume_snapshots_oc_api_token
     - delete_volume_snapshots_pvc_namespace
     - delete_volume_snapshots_volume_snapshot_specs
 
-# Define a YAML anchor for OpenShift/Kubernetes API login info.
-# Reused below via '<<: *k8s_auth' to avoid repeating host/api_key/validate_certs
-# across every k8s task.
 - name: Define anchor for OpenShift/Kubernetes API login info
   ansible.builtin.set_fact:
     k8s_auth: &k8s_auth
-      host: "{{ delete_volume_snapshots_oc_api_url }}"
-      api_key: "{{ delete_volume_snapshots_oc_api_token }}"
+      host: "{{ delete_volume_snapshots_oc_api_url | default(omit) }}"
+      api_key: "{{ delete_volume_snapshots_oc_api_token | default(omit) }}"
       validate_certs: "{{ delete_volume_snapshots_validate_certs | default(false) }}"
+
+- name: Verify required fields in each delete_volume_snapshots_volume_snapshot_specs entry
+  ansible.builtin.fail:
+    msg: "delete_volume_snapshots_volume_snapshot_specs entry is missing required field '{{ item.1 }}': {{ item.0 }}"
+  when:
+    - item.0[item.1] is not defined or (item.0[item.1] | default('') | string | length == 0)
+  loop: "{{ delete_volume_snapshots_volume_snapshot_specs | default([]) | product(['snapshot_name']) | list }}"
+  loop_control:
+    label: "{{ item.0.snapshot_name | default('<unnamed>') }}.{{ item.1 }}"
 
 # Delete VolumeSnapshots of the specified PVCs from the given namespace
 - name: Delete VolumeSnapshots of the specified PVCs from namespace {{ delete_volume_snapshots_pvc_namespace | default('') }}
