@@ -1,4 +1,4 @@
-# create_volume_snapshots role
+# Create VolumeSnapshot Role
 
 ## Overview
 
