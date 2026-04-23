@@ -23,7 +23,7 @@
       validate_certs: "{{ delete_volume_snapshots_validate_certs | default(false) }}"
 
 # Delete VolumeSnapshots of the specified PVCs from the given namespace
-- name: Delete VolumeSnapshots of the specified PVCs from {{ delete_volume_snapshots_pvc_namespace | default('') }} namespace
+- name: Delete VolumeSnapshots of the specified PVCs from namespace {{ delete_volume_snapshots_pvc_namespace | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: absent

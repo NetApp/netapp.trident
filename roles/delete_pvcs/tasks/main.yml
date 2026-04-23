@@ -75,7 +75,7 @@
       validate_certs: "{{ delete_pvcs_validate_certs | default(false) }}"
 
 # Delete PVCs with NFS storage class from the specified namespace
-- name: Delete NFS PVCs from {{ delete_pvcs_pvc_namespace | default('') }} namespace
+- name: Delete NFS PVCs from namespace {{ delete_pvcs_pvc_namespace | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: absent
@@ -91,7 +91,7 @@
 # Note: PVCs are namespaced resources, so we delete them from the specified namespace.
 
 # Delete PVCs with NFS FlexGroup storage class from the specified namespace
-- name: Delete NFS FlexGroup PVCs from {{ delete_pvcs_pvc_namespace | default('') }} namespace
+- name: Delete NFS FlexGroup PVCs from namespace {{ delete_pvcs_pvc_namespace | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: absent
@@ -106,7 +106,7 @@
     - k8s_delete_nfs_flexgroup_pvcs
 
 # Delete PVCs with iSCSI storage class from the specified namespace
-- name: Delete iSCSI PVCs from {{ delete_pvcs_pvc_namespace | default('') }} namespace
+- name: Delete iSCSI PVCs from namespace {{ delete_pvcs_pvc_namespace | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: absent
@@ -121,7 +121,7 @@
     - k8s_delete_iscsi_pvcs
 
 # Delete PVCs with NVMe/TCP storage class from the specified namespace
-- name: Delete NVMe/TCP PVCs from {{ delete_pvcs_pvc_namespace | default('') }} namespace
+- name: Delete NVMe/TCP PVCs from namespace {{ delete_pvcs_pvc_namespace | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: absent
@@ -136,7 +136,7 @@
     - k8s_delete_nvme_tcp_pvcs
 
 # Delete PVCs with FCP storage class from the specified namespace
-- name: Delete FCP PVCs from {{ delete_pvcs_pvc_namespace | default('') }} namespace
+- name: Delete FCP PVCs from namespace {{ delete_pvcs_pvc_namespace | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: absent

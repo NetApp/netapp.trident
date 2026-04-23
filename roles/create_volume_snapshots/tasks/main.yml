@@ -31,7 +31,7 @@
       validate_certs: "{{ create_volume_snapshots_validate_certs | default(false) }}"
 
 # Get all PVCs in the namespace to validate before creating snapshots
-- name: Get all PVCs in the {{ create_volume_snapshots_pvc_namespace | default('') }} namespace
+- name: Get all PVCs in namespace {{ create_volume_snapshots_pvc_namespace | default('') }}
   kubernetes.core.k8s_info:
     <<: *k8s_auth
     kind: PersistentVolumeClaim
@@ -42,7 +42,7 @@
     - k8s_create_volume_snapshots
 
 # Create VolumeSnapshots of the specified PVCs in the given namespace
-- name: Create VolumeSnapshots of the specified PVCs in the {{ create_volume_snapshots_pvc_namespace | default('') }} namespace
+- name: Create VolumeSnapshots of the specified PVCs in namespace {{ create_volume_snapshots_pvc_namespace | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: present
@@ -69,7 +69,10 @@
 # Display warning for snapshots with non-existent PVCs
 - name: Display warning for VolumeSnapshots with non-existent PVCs
   ansible.builtin.debug:
-    msg: "WARNING: Skipping snapshot '{{ item.snapshot_name }}' - PVC '{{ item.pvc_name }}' does not exist in namespace '{{ create_volume_snapshots_pvc_namespace | default('') }}'"
+    msg: >-
+      WARNING: Skipping snapshot '{{ item.snapshot_name }}' -
+      PVC '{{ item.pvc_name }}' does not exist in namespace
+      '{{ create_volume_snapshots_pvc_namespace | default('') }}'
   loop: "{{ create_volume_snapshots_volume_snapshot_specs | default([]) }}"
   when:
     - existing_pvcs is defined

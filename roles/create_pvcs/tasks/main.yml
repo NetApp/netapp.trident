@@ -124,7 +124,7 @@
     - k8s_create_pvc_namespace
 
 # Create PVCs with NFS storage class in the specified namespace
-- name: Create PVCs with NFS storage class in the {{ create_pvcs_pvc_namespace | default('') }} namespace
+- name: Create NFS PVCs in namespace {{ create_pvcs_pvc_namespace | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: present
@@ -151,7 +151,7 @@
     - k8s_create_nfs_pvcs
 
 # Create PVCs with NFS FlexGroup storage class in the specified namespace
-- name: Create PVCs with NFS FlexGroup storage class in the {{ create_pvcs_pvc_namespace | default('') }} namespace
+- name: Create NFS FlexGroup PVCs in namespace {{ create_pvcs_pvc_namespace | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: present
@@ -206,7 +206,7 @@
     - k8s_create_nfs_flexgroup_pvcs
 
 # Create PVCs with iSCSI storage class in the specified namespace
-- name: Create PVCs with iSCSI storage class in the {{ create_pvcs_pvc_namespace | default('') }} namespace
+- name: Create iSCSI PVCs in namespace {{ create_pvcs_pvc_namespace | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: present
@@ -236,7 +236,10 @@
 # Warn about skipped iSCSI PVCs with unsupported RWX + Filesystem combination
 - name: Display warning for iSCSI PVCs with unsupported RWX + Filesystem configuration
   ansible.builtin.debug:
-    msg: "WARNING: Skipping PVC '{{ item.pvc_name }}' - iSCSI does not support ReadWriteMany (RWX) access mode with Filesystem volume mode. Use ReadWriteMany (RWX) with Block volume mode."
+    msg: >-
+      WARNING: Skipping PVC '{{ item.pvc_name }}' - iSCSI does not support
+      ReadWriteMany (RWX) access mode with Filesystem volume mode.
+      Use ReadWriteMany (RWX) with Block volume mode.
   loop: "{{ create_pvcs_iscsi_specs.pvc_info | default([]) }}"
   when:
     - create_pvcs_configure_iscsi | bool
@@ -248,7 +251,7 @@
     - k8s_create_iscsi_pvcs
 
 # Create PVCs with NVMe/TCP storage class in the specified namespace
-- name: Create PVCs with NVMe/TCP storage class in the {{ create_pvcs_pvc_namespace | default('') }} namespace
+- name: Create NVMe/TCP PVCs in namespace {{ create_pvcs_pvc_namespace | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: present
@@ -278,7 +281,10 @@
 # Warn about skipped NVMe/TCP PVCs with unsupported RWX + Filesystem combination
 - name: Display warning for NVMe/TCP PVCs with unsupported RWX + Filesystem configuration
   ansible.builtin.debug:
-    msg: "WARNING: Skipping PVC '{{ item.pvc_name }}' - NVMe/TCP does not support ReadWriteMany (RWX) access mode with Filesystem volume mode. Use ReadWriteMany (RWX) with Block volume mode."
+    msg: >-
+      WARNING: Skipping PVC '{{ item.pvc_name }}' - NVMe/TCP does not support
+      ReadWriteMany (RWX) access mode with Filesystem volume mode.
+      Use ReadWriteMany (RWX) with Block volume mode.
   loop: "{{ create_pvcs_nvme_tcp_specs.pvc_info | default([]) }}"
   when:
     - create_pvcs_configure_nvme_tcp | bool
@@ -290,7 +296,7 @@
     - k8s_create_nvme_tcp_pvcs
 
 # Create PVCs with FCP storage class in the specified namespace
-- name: Create PVCs with FCP storage class in the {{ create_pvcs_pvc_namespace | default('') }} namespace
+- name: Create FCP PVCs in namespace {{ create_pvcs_pvc_namespace | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: present
@@ -320,7 +326,10 @@
 # Warn about skipped FCP PVCs with unsupported RWX + Filesystem combination
 - name: Display warning for FCP PVCs with unsupported RWX + Filesystem configuration
   ansible.builtin.debug:
-    msg: "WARNING: Skipping PVC '{{ item.pvc_name }}' - FCP does not support ReadWriteMany (RWX) access mode with Filesystem volume mode. Use ReadWriteMany (RWX) with Block volume mode."
+    msg: >-
+      WARNING: Skipping PVC '{{ item.pvc_name }}' - FCP does not support
+      ReadWriteMany (RWX) access mode with Filesystem volume mode.
+      Use ReadWriteMany (RWX) with Block volume mode.
   loop: "{{ create_pvcs_fcp_specs.pvc_info | default([]) }}"
   when:
     - create_pvcs_configure_fcp | bool

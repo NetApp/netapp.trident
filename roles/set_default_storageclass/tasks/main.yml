@@ -70,7 +70,7 @@
     - k8s_set_default_storage_class
 
 # Set one of the created storage classes as the default storage class
-- name: Set {{ set_default_storageclass_default_sc | default('') }} as the default storage class
+- name: Set default storage class to {{ set_default_storageclass_default_sc | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: present

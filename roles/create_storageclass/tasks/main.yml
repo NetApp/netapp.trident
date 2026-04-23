@@ -127,7 +127,7 @@
       validate_certs: "{{ create_storageclass_validate_certs | default(false) }}"
 
 # Create NFS storage class with specified volume binding mode
-- name: Create NFS storage class with {{ create_storageclass_nfs_specs.sc_volume_binding_mode | default('') }} volume binding mode
+- name: Create NFS storage class with volume binding mode {{ create_storageclass_nfs_specs.sc_volume_binding_mode | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: present
@@ -154,7 +154,7 @@
     - k8s_create_nfs_storage_class
 
 # Create NFS FlexGroup storage class with specified volume binding mode
-- name: Create NFS FlexGroup storage class with {{ create_storageclass_nfs_flexgroup_specs.sc_volume_binding_mode | default('') }} volume binding mode
+- name: Create NFS FlexGroup storage class with volume binding mode {{ create_storageclass_nfs_flexgroup_specs.sc_volume_binding_mode | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: present
@@ -181,7 +181,7 @@
     - k8s_create_nfs_flexgroup_storage_class
 
 # Create iSCSI storage class with specified volume binding mode
-- name: Create iSCSI storage class with {{ create_storageclass_iscsi_specs.sc_volume_binding_mode | default('') }} volume binding mode
+- name: Create iSCSI storage class with volume binding mode {{ create_storageclass_iscsi_specs.sc_volume_binding_mode | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: present
@@ -207,7 +207,7 @@
     - k8s_create_iscsi_storage_class
 
 # Create NVMe/TCP storage class with specified volume binding mode
-- name: Create NVMe/TCP storage class with {{ create_storageclass_nvme_tcp_specs.sc_volume_binding_mode | default('') }} volume binding mode
+- name: Create NVMe/TCP storage class with volume binding mode {{ create_storageclass_nvme_tcp_specs.sc_volume_binding_mode | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: present
@@ -233,7 +233,7 @@
     - k8s_create_nvme_tcp_storage_class
 
 # Create FCP storage class with specified volume binding mode
-- name: Create FCP storage class with {{ create_storageclass_fcp_specs.sc_volume_binding_mode | default('') }} volume binding mode
+- name: Create FCP storage class with volume binding mode {{ create_storageclass_fcp_specs.sc_volume_binding_mode | default('') }}
   kubernetes.core.k8s:
     <<: *k8s_auth
     state: present
