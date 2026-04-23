@@ -1,4 +1,4 @@
-# delete_pvcs role
+# Delete PVCs Role
 
 ## Overview
 
