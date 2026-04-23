@@ -1,4 +1,4 @@
-# delete_volume_snapshots role
+# Delete VolumeSnapshot Role
 
 ## Overview
 
