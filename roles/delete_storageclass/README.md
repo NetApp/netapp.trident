@@ -1,4 +1,4 @@
-# delete_storageclass role
+# Delete StorageClass Role
 
 ## Overview
 
