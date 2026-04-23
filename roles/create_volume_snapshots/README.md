@@ -47,7 +47,7 @@ Each entry in `create_volume_snapshots_volume_snapshot_specs` is a dict with:
 
 ```yaml
 ---
-- name: Create Trident VolumeSnapshots
+- name: Create VolumeSnapshots
   hosts: localhost
   gather_facts: false
   connection: local

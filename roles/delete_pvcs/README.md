@@ -47,7 +47,7 @@ Each entry in `pvc_info` is a dict with:
 
 ```yaml
 ---
-- name: Delete Trident PVCs
+- name: Delete Trident-backed NFS PVCs
   hosts: localhost
   gather_facts: false
   connection: local

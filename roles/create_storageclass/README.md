@@ -56,7 +56,7 @@ Each `*_specs` dict accepts the following keys:
 
 ```yaml
 ---
-- name: Create Trident StorageClasses
+- name: Create NFS StorageClass
   hosts: localhost
   gather_facts: false
   connection: local

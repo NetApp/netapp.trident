@@ -54,7 +54,7 @@ Each entry in `pvc_info` is a dict with the following keys:
 
 ```yaml
 ---
-- name: Create Trident-backed PVCs
+- name: Create Trident-backed NFS PVCs
   hosts: localhost
   gather_facts: false
   connection: local

@@ -38,7 +38,7 @@ The `set_default_storageclass` role is part of the **NetApp Trident Validated Co
 
 ```yaml
 ---
-- name: Set the Trident NFS StorageClass as the cluster default
+- name: Set the NFS StorageClass as the default storage class
   hosts: localhost
   gather_facts: false
   connection: local

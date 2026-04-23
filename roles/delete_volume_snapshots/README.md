@@ -36,7 +36,7 @@ Each entry in `delete_volume_snapshots_volume_snapshot_specs` is a dict with:
 
 ```yaml
 ---
-- name: Delete Trident VolumeSnapshots
+- name: Delete VolumeSnapshots
   hosts: localhost
   gather_facts: false
   connection: local

@@ -45,7 +45,7 @@ Each `*_specs` dict accepts the following key:
 
 ```yaml
 ---
-- name: Delete Trident StorageClasses
+- name: Delete NFS StorageClass
   hosts: localhost
   gather_facts: false
   connection: local

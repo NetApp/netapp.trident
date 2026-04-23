@@ -38,7 +38,7 @@ Nested keys of `create_volume_snapshotclass_vol_snapshot_class_specs`:
 
 ```yaml
 ---
-- name: Create Trident VolumeSnapshotClass
+- name: Create VolumeSnapshotClass
   hosts: localhost
   gather_facts: false
   connection: local

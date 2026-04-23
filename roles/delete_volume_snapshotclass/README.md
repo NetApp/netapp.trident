@@ -34,7 +34,7 @@ Nested key of `delete_volume_snapshotclass_vol_snapshot_class_specs`:
 
 ```yaml
 ---
-- name: Delete Trident VolumeSnapshotClass
+- name: Delete VolumeSnapshotClass
   hosts: localhost
   gather_facts: false
   connection: local
