@@ -48,16 +48,6 @@ ansible-galaxy collection install netapp.trident:==1.0.0
 
 See [using Ansible collections](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html) for more details.
 
-### Running the roles
-
-Each role under `roles/` is self-contained with its own `defaults/main.yml`, `tests/test.yml`, and `README.md`. Create a playbook (or reuse a role's `tests/test.yml`) that imports the role(s) you need, and override variables as required.
-
-To create Kubernetes objects (StorageClasses, PVCs, VolumeSnapshotClasses, VolumeSnapshots), write a playbook that includes (in this order): `create_storageclass`, `set_default_storageclass`, `create_pvcs`, `create_volume_snapshotclass`, `create_volume_snapshots`.
-
-To delete them, include (in this order): `delete_volume_snapshots`, `delete_volume_snapshotclass`, `delete_pvcs`, `delete_storageclass`.
-
-Refer to each role's `README.md` for variables, defaults, and an example playbook.
-
 ## Release notes
 
 See the [changelog](https://github.com/NetApp/netapp.trident/tree/main/changelogs/changelog.rst).
