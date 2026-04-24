@@ -1,4 +1,20 @@
 ---
+galaxy_info:
+  role_name: set_default_storageclass
+  namespace: netapp
+  author: Kamini Singh
+  description: Set a Kubernetes StorageClass as the cluster-wide default StorageClass.
+  company: NetApp
+  license: Apache-2.0
+  min_ansible_version: "2.16"
+  galaxy_tags:
+    - netapp
+    - trident
+    - openshift
+    - kubernetes
+    - storage
+    - storageclass
+
 dependencies: []
   # List your role dependencies here, one per line. Be sure to remove the '[]' above,
   # if you add dependencies to this list.

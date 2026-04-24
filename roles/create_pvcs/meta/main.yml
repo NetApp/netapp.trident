@@ -1,4 +1,20 @@
 ---
+galaxy_info:
+  role_name: create_pvcs
+  namespace: netapp
+  author: Kamini Singh
+  description: Create a namespace and PersistentVolumeClaims using NetApp Trident in Kubernetes/OpenShift.
+  company: NetApp
+  license: Apache-2.0
+  min_ansible_version: "2.16"
+  galaxy_tags:
+    - netapp
+    - trident
+    - openshift
+    - kubernetes
+    - storage
+    - pvc
+
 dependencies: []
   # List your role dependencies here, one per line. Be sure to remove the '[]' above,
   # if you add dependencies to this list.
