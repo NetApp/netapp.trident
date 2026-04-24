@@ -3,7 +3,7 @@ galaxy_info:
   role_name: delete_volume_snapshotclass
   namespace: netapp
   author: Kamini Singh
-  description: Delete a VolumeSnapshotClass from a Kubernetes cluster.
+  description: Delete a VolumeSnapshotClass from a Kubernetes/OpenShift cluster.
   company: NetApp
   license: Apache-2.0
   min_ansible_version: "2.16"
