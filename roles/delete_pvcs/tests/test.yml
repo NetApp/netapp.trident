@@ -8,8 +8,25 @@
     delete_pvcs_oc_api_token: "<your_api_token>"
     delete_pvcs_pvc_namespace: test-project
     delete_pvcs_configure_nfs: true
+    delete_pvcs_configure_nfs_flexgroup: true
+    delete_pvcs_configure_iscsi: true
+    delete_pvcs_configure_fcp: true
+    delete_pvcs_configure_nvme_tcp: true
     delete_pvcs_nfs_specs:
       pvc_info:
         - { pvc_name: test-nfs-pvc-1 }
+        - { pvc_name: test-nfs-pvc-2 }
+    delete_pvcs_nfs_flexgroup_specs:
+      pvc_info:
+        - { pvc_name: test-nfs-flexgroup-pvc-1 }
+    delete_pvcs_iscsi_specs:
+      pvc_info:
+        - { pvc_name: test-iscsi-pvc-1 }
+    delete_pvcs_fcp_specs:
+      pvc_info:
+        - { pvc_name: test-fcp-pvc-1 }
+    delete_pvcs_nvme_tcp_specs:
+      pvc_info:
+        - { pvc_name: test-nvme-tcp-pvc-1 }
   roles:
     - delete_pvcs

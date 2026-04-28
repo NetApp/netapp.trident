@@ -8,9 +8,30 @@
     create_pvcs_oc_api_token: "<your_api_token>"
     create_pvcs_pvc_namespace: test-project
     create_pvcs_configure_nfs: true
+    create_pvcs_configure_nfs_flexgroup: true
+    create_pvcs_configure_iscsi: true
+    create_pvcs_configure_fcp: true
+    create_pvcs_configure_nvme_tcp: true
     create_pvcs_nfs_specs:
       sc_name: ontap-nfs-sc
       pvc_info:
         - { pvc_name: test-nfs-pvc-1, pvc_size: 100Gi, access_modes: [ReadWriteOnce] }
+        - { pvc_name: test-nfs-pvc-2, pvc_size: 200Gi, access_modes: [ReadWriteMany] }
+    create_pvcs_nfs_flexgroup_specs:
+      sc_name: ontap-nfs-flexgroup-sc
+      pvc_info:
+        - { pvc_name: test-nfs-flexgroup-pvc-1, pvc_size: 500Gi, access_modes: [ReadWriteMany] }
+    create_pvcs_iscsi_specs:
+      sc_name: ontap-iscsi-sc
+      pvc_info:
+        - { pvc_name: test-iscsi-pvc-1, pvc_size: 100Gi, access_modes: [ReadWriteOnce] }
+    create_pvcs_fcp_specs:
+      sc_name: ontap-fcp-sc
+      pvc_info:
+        - { pvc_name: test-fcp-pvc-1, pvc_size: 100Gi, access_modes: [ReadWriteOnce] }
+    create_pvcs_nvme_tcp_specs:
+      sc_name: ontap-nvme-tcp-sc
+      pvc_info:
+        - { pvc_name: test-nvme-tcp-pvc-1, pvc_size: 100Gi, access_modes: [ReadWriteOnce] }
   roles:
     - create_pvcs
