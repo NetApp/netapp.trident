@@ -7,7 +7,19 @@
     delete_storageclass_oc_api_url: "https://api.example.openshift.com:6443"
     delete_storageclass_oc_api_token: "<your_api_token>"
     delete_storageclass_configure_nfs: true
+    delete_storageclass_configure_nfs_flexgroup: true
+    delete_storageclass_configure_iscsi: true
+    delete_storageclass_configure_fcp: true
+    delete_storageclass_configure_nvme_tcp: true
     delete_storageclass_nfs_specs:
       sc_name: ontap-nfs-sc
+    delete_storageclass_nfs_flexgroup_specs:
+      sc_name: ontap-nfs-flexgroup-sc
+    delete_storageclass_iscsi_specs:
+      sc_name: ontap-iscsi-sc
+    delete_storageclass_fcp_specs:
+      sc_name: ontap-fcp-sc
+    delete_storageclass_nvme_tcp_specs:
+      sc_name: ontap-nvme-tcp-sc
   roles:
     - delete_storageclass
