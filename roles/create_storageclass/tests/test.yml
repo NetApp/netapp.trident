@@ -35,5 +35,3 @@
       sc_volume_binding_mode: Immediate
   roles:
     - create_storageclass
-
-# test cases to validate the creation of storage classes can be added here, for example:
