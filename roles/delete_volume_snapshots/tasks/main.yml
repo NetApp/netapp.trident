@@ -13,7 +13,7 @@
 
 - name: Define anchor for OpenShift/Kubernetes API login info
   ansible.builtin.set_fact:
-    k8s_auth: &k8s_auth
+    delete_volume_snapshots_k8s_auth: &k8s_auth
       host: "{{ delete_volume_snapshots_oc_api_url | default(omit) }}"
       api_key: "{{ delete_volume_snapshots_oc_api_token | default(omit) }}"
       validate_certs: "{{ delete_volume_snapshots_validate_certs | default(false) }}"
