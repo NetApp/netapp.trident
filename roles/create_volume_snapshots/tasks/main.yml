@@ -14,7 +14,7 @@
 
 - name: Define anchor for OpenShift/Kubernetes API login info
   ansible.builtin.set_fact:
-    k8s_auth: &k8s_auth
+    create_volume_snapshots_k8s_auth: &k8s_auth
       host: "{{ create_volume_snapshots_oc_api_url | default(omit) }}"
       api_key: "{{ create_volume_snapshots_oc_api_token | default(omit) }}"
       validate_certs: "{{ create_volume_snapshots_validate_certs | default(false) }}"
@@ -44,7 +44,7 @@
     kind: PersistentVolumeClaim
     namespace: "{{ create_volume_snapshots_pvc_namespace | default('') }}"
     api_version: v1
-  register: existing_pvcs
+  register: create_volume_snapshots_existing_pvcs
   tags:
     - k8s_create_volume_snapshots
 
@@ -67,9 +67,9 @@
   when:
     - item.snapshot_name is defined and item.snapshot_name != ""
     - item.pvc_name is defined and item.pvc_name != ""
-    - existing_pvcs is defined
-    - existing_pvcs.resources is defined
-    - item.pvc_name in (existing_pvcs.resources | map(attribute='metadata.name') | list)
+    - create_volume_snapshots_existing_pvcs is defined
+    - create_volume_snapshots_existing_pvcs.resources is defined
+    - item.pvc_name in (create_volume_snapshots_existing_pvcs.resources | map(attribute='metadata.name') | list)
   tags:
     - k8s_create_volume_snapshots
 
@@ -82,10 +82,10 @@
       '{{ create_volume_snapshots_pvc_namespace | default('') }}'
   loop: "{{ create_volume_snapshots_volume_snapshot_specs | default([]) }}"
   when:
-    - existing_pvcs is defined
-    - existing_pvcs.resources is defined
+    - create_volume_snapshots_existing_pvcs is defined
+    - create_volume_snapshots_existing_pvcs.resources is defined
     - item.snapshot_name is defined and item.snapshot_name != ""
     - item.pvc_name is defined and item.pvc_name != ""
-    - item.pvc_name not in (existing_pvcs.resources | map(attribute='metadata.name') | list)
+    - item.pvc_name not in (create_volume_snapshots_existing_pvcs.resources | map(attribute='metadata.name') | list)
   tags:
     - k8s_create_volume_snapshots
